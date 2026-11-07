@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>FUTURELAB // Mech Lab</title>
+<style>
+:root{--bg:#050811;--pn:#0c1222;--bd:#1e293b;--cy:#00d2ff;--wn:#f43f5e;--am:#fbbf24;--gr:#34d399;--tx:#f8fafc;--mu:#94a3b8;--mono:ui-monospace,SFMono-Regular,Menlo,Consolas,"IBM Plex Mono",monospace;--sans:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--tx);font-family:var(--sans)}
+body{background-image:radial-gradient(rgba(0,210,255,.1) 1px,transparent 1px);background-size:24px 24px;padding-bottom:84px}
+button{font:inherit;color:inherit;cursor:pointer;touch-action:manipulation}
+.mono{font-family:var(--mono)}
+header{position:sticky;top:0;z-index:30;display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:#050811f2;border-bottom:1px solid var(--bd);backdrop-filter:blur(6px)}
+.tag{font:700 10px var(--mono);color:var(--cy);border:1px solid #00d2ff66;background:#00d2ff14;padding:2px 7px;border-radius:4px}
+h1{font:800 14px var(--mono);letter-spacing:.08em;margin:0 0 0 8px}
+h1 span{color:var(--cy);font-size:11px}
+.wrap{max-width:980px;margin:0 auto;padding:10px 12px}
+.grid2{display:grid;gap:12px;grid-template-columns:minmax(0,1fr)}.grid2>*{min-width:0}html,body{overflow-x:hidden}
+@media(min-width:900px){.grid2{grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);align-items:start}.viewcol{position:sticky;top:54px}}
+.panel{background:var(--pn);border:1px solid var(--bd);border-radius:12px;padding:12px;box-shadow:0 0 15px rgba(0,210,255,.08)}
+.viewcol{position:sticky;top:46px;z-index:20}
+@media(max-width:899px){.viewcol{margin:0 -12px;border-radius:0}.viewcol .panel{border-radius:0;border-left:0;border-right:0;padding:8px 10px}}
+.view{position:relative;height:min(40vh,380px);border:1px solid var(--bd);border-radius:10px;overflow:hidden;background:radial-gradient(ellipse at 50% 40%,#0f1d38,#050811 75%)}
+@media(min-width:900px){.view{height:440px}}
+#cv{width:100%;height:100%;display:block;touch-action:none}
+.vtools{position:absolute;top:8px;right:8px;display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+.vt{font:700 10px var(--mono);background:#050811cc;border:1px solid var(--bd);color:var(--mu);padding:6px 8px;border-radius:6px}
+.vt.on{color:var(--bg);background:var(--cy);border-color:var(--cy)}
+.vbadge{position:absolute;left:8px;top:8px;font:700 10px var(--mono);padding:4px 7px;border-radius:5px;background:#050811cc;border:1px solid var(--bd)}
+.vname{position:absolute;left:8px;bottom:8px;font:700 11px var(--mono);color:var(--cy);text-shadow:0 0 8px #00d2ff88}
+.vhint{position:absolute;right:8px;bottom:8px;font:10px var(--mono);color:#64748b}
+.bars{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:8px}
+.bar b{overflow:hidden;display:flex;justify-content:space-between;font:700 9.5px var(--mono);color:var(--mu);margin-bottom:3px;white-space:nowrap}
+.bar b i{font-style:normal;color:var(--tx)}
+.bar .t{height:7px;background:#050811;border:1px solid var(--bd);border-radius:4px;overflow:hidden}
+.bar .t>div{height:100%;background:var(--cy);transition:width .25s,background .25s}
+.tabs{display:flex;gap:6px;margin:12px 0 10px;overflow-x:auto;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{flex:1;font:800 11px var(--mono);letter-spacing:.06em;padding:10px 8px;border-radius:8px;background:var(--pn);border:1px solid var(--bd);color:var(--mu);white-space:nowrap}
+.tab.on{background:var(--cy);color:var(--bg);border-color:var(--cy)}
+.slot{background:#050811;border:1px solid var(--bd);border-radius:10px;padding:10px;margin-bottom:8px}
+.slot.warn{border-color:#f43f5e88}
+.sh{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.sh .l{font:700 9.5px var(--mono);letter-spacing:.12em;color:var(--mu)}
+.sh .n{font-weight:800;font-size:15px}
+.chips{display:flex;gap:6px;overflow-x:auto;padding:8px 0 2px;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:none;font:700 12px var(--sans);padding:8px 11px;border-radius:7px;background:#00d2ff0d;border:1px solid #00d2ff40;color:var(--tx)}
+.chip.on{background:var(--cy);color:var(--bg);border-color:var(--cy);box-shadow:0 0 12px #00d2ff55}
+.chip.sw{width:34px;height:34px;padding:0;border-radius:50%}
+.spec{font:11px var(--mono);color:var(--mu);margin-top:6px;line-height:1.5}
+.spec em{font-style:normal;color:var(--cy)}
+.note{font-size:12.5px;color:#cbd5e1;margin-top:6px;line-height:1.45;border-left:2px solid #00d2ff55;padding-left:8px}
+.mgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.met{background:#050811;border:1px solid var(--bd);border-radius:10px;padding:10px}
+.met .k{font:700 9.5px var(--mono);letter-spacing:.1em;color:var(--mu)}
+.met .v{font:800 20px var(--mono);margin:3px 0}
+.met .s{font-size:11.5px;color:#94a3b8;line-height:1.4}
+.met.bad .v{color:var(--wn)}.met.ok .v{color:var(--gr)}.met.mid .v{color:var(--am)}
+.warns{margin-top:10px}
+.w{display:flex;gap:8px;padding:9px 10px;border-radius:8px;margin-bottom:6px;font-size:13px;line-height:1.4;background:#f43f5e14;border:1px solid #f43f5e55}
+.w.y{background:#fbbf2412;border-color:#fbbf2455}.w.g{background:#34d39912;border-color:#34d39955}
+.w b{font-family:var(--mono);font-size:11px}
+details{background:#050811;border:1px solid var(--bd);border-radius:10px;margin-bottom:8px}
+summary{list-style:none;padding:12px;font-weight:800;font-size:14px;display:flex;justify-content:space-between}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"+";color:var(--cy);font-family:var(--mono)}
+details[open] summary::after{content:"–"}
+details .b{padding:0 12px 12px;font-size:13.5px;line-height:1.55;color:#cbd5e1}
+details .b .eq{font:12px var(--mono);color:var(--cy);background:#00d2ff0d;padding:6px 8px;border-radius:6px;margin:6px 0;display:block}
+details .b .yours{font:12px var(--mono);color:var(--am);margin-top:6px;display:block}
+.btn{font:800 12px var(--mono);letter-spacing:.05em;padding:11px 12px;border-radius:9px;background:var(--pn);border:1px solid var(--bd);color:var(--tx)}
+.btn.cy{background:var(--cy);color:var(--bg);border-color:var(--cy)}
+.row{display:flex;gap:8px;flex-wrap:wrap}
+.row .btn{flex:1}
+.save{display:flex;align-items:center;gap:8px;background:#050811;border:1px solid var(--bd);border-radius:10px;padding:10px;margin-bottom:8px}
+.save .i{flex:1;min-width:0}.save .i b{display:block;font-size:14px}.save .i span{font:11px var(--mono);color:var(--mu)}
+textarea{width:100%;min-height:90px;background:#050811;border:1px solid var(--bd);border-radius:8px;color:var(--tx);font:12px var(--mono);padding:8px;margin-top:8px}
+.go{position:fixed;left:0;right:0;bottom:0;z-index:40;padding:10px 12px calc(10px + env(safe-area-inset-bottom));background:linear-gradient(transparent,#050811 30%)}
+.go button{width:100%;max-width:980px;margin:0 auto;display:block;padding:15px;border-radius:12px;border:0;background:var(--cy);color:var(--bg);font:900 14px var(--mono);letter-spacing:.06em;box-shadow:0 0 24px #00d2ff44}
+.toast{position:fixed;left:50%;top:64px;transform:translateX(-50%);z-index:90;background:#0c1222;border:1px solid var(--cy);color:var(--tx);padding:9px 14px;border-radius:8px;font:700 12px var(--mono);opacity:0;transition:opacity .2s;pointer-events:none}
+.toast.on{opacity:1}
+/* test range */
+#range{position:fixed;inset:0;z-index:80;background:#03050b;display:none;flex-direction:column}
+#range.on{display:flex}
+#rcv{flex:1;width:100%;min-height:0;display:block;touch-action:none}
+.rtop{position:absolute;left:0;right:0;top:0;padding:10px 12px;display:flex;justify-content:space-between;align-items:flex-start;pointer-events:none}
+.rst{font:800 11px var(--mono);letter-spacing:.1em;color:var(--cy)}
+.rst big{display:block;font-size:18px;color:var(--tx);letter-spacing:.04em;margin-top:2px}
+.rx{pointer-events:auto}
+.rhud{position:absolute;left:10px;right:10px;bottom:calc(10px + env(safe-area-inset-bottom));display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.rh{background:#050811d0;border:1px solid var(--bd);border-radius:8px;padding:6px 7px}
+.rh b{display:block;font:700 9px var(--mono);color:var(--mu);letter-spacing:.08em}
+.rh i{display:block;font:800 14px var(--mono);font-style:normal;margin-top:2px}
+.rh .t{height:4px;background:#1e293b;border-radius:2px;margin-top:4px;overflow:hidden}.rh .t div{height:100%;background:var(--cy)}
+.ralert{position:absolute;left:0;right:0;top:34%;text-align:center;font:900 22px var(--mono);letter-spacing:.06em;text-shadow:0 0 16px currentColor;pointer-events:none;opacity:0;transition:opacity .2s}
+#report{position:absolute;inset:0;overflow-y:auto;background:#050811f4;display:none;padding:16px 14px calc(30px + env(safe-area-inset-bottom))}
+#report.on{display:block}
+.grade{font:900 72px var(--mono);text-align:center;line-height:1;margin:6px 0 2px;text-shadow:0 0 30px currentColor}
+.rrow{display:flex;justify-content:space-between;padding:8px 2px;border-bottom:1px dashed var(--bd);font-size:13.5px}
+.rrow span:last-child{font-family:var(--mono);font-weight:700}
+.pf{font:800 10px var(--mono);padding:2px 6px;border-radius:4px;margin-left:6px}
+.pf.p{background:#34d39933;color:var(--gr)}.pf.f{background:#f43f5e33;color:var(--wn)}.pf.m{background:#fbbf2433;color:var(--am)}
+h3{font:800 12px var(--mono);letter-spacing:.12em;color:var(--mu);margin:16px 0 8px}
+footer{text-align:center;font:10px var(--mono);color:#475569;padding:18px 0 8px}
+</style>
+</head>
+<body>
+<header><div style="display:flex;align-items:center"><span class="tag">FUTURELAB // R&amp;D</span><h1>MECH LAB <span>// SYS.02</span></h1></div><button class="btn" style="padding:7px 10px;font-size:10px" onclick="tabTo('hangar')">HANGAR</button></header>
+<div class="wrap">
+ <div class="grid2">
+  <div class="viewcol"><div class="panel">
+   <div class="view"><canvas id="cv"></canvas>
+    <div class="vbadge mono" id="badge">OPTIMAL</div>
+    <div class="vtools"><button class="vt on" id="t-rot" onclick="tog('rot')">SPIN</button><button class="vt" id="t-xray" onclick="tog('xray')">X-RAY</button><button class="vt on" id="t-cog" onclick="tog('cog')">CoG</button></div>
+    <div class="vname" id="vname"></div><div class="vhint">drag · pinch</div>
+   </div>
+   <div class="bars">
+    <div class="bar"><b>MASS <i id="bm-l"></i></b><div class="t"><div id="bm"></div></div></div>
+    <div class="bar"><b>POWER <i id="bp-l"></i></b><div class="t"><div id="bp"></div></div></div>
+    <div class="bar"><b>HEAT <i id="bh-l"></i></b><div class="t"><div id="bh"></div></div></div>
+   </div>
+  </div></div>
+  <div>
+   <div class="tabs"><button class="tab on" data-t="build" onclick="tabTo('build')">BUILD</button><button class="tab" data-t="stats" onclick="tabTo('stats')">ANALYSIS</button><button class="tab" data-t="learn" onclick="tabTo('learn')">LEARN</button><button class="tab" data-t="hangar" onclick="tabTo('hangar')">HANGAR</button></div>
+   <div id="p-build"></div>
+   <div id="p-stats" hidden></div>
+   <div id="p-learn" hidden></div>
+   <div id="p-hangar" hidden></div>
+  </div>
+ </div>
+ <footer>FUTURELAB R&amp;D DIVISION // VIRTUAL MECH WORKBENCH v1.0 // simplified physics for learning</footer>
+</div>
+<div class="go"><button onclick="startRange()">▶ RUN TEST RANGE</button></div>
+<div class="toast" id="toast"></div>
+
+<div id="range">
+ <canvas id="rcv"></canvas>
+ <div class="rtop"><div class="rst" id="rstage">STAGE 1/3<big>MOBILITY COURSE</big></div><button class="btn rx" onclick="endRange(true)">ABORT</button></div>
+ <div class="ralert" id="ralert"></div>
+ <div class="rhud">
+  <div class="rh"><b>SPEED</b><i id="h-spd">0</i></div>
+  <div class="rh"><b>HEAT</b><i id="h-heat">0%</i><div class="t"><div id="h-heatb"></div></div></div>
+  <div class="rh"><b>HITS</b><i id="h-hits">0/0</i></div>
+  <div class="rh"><b>INTEGRITY</b><i id="h-hp">100%</i><div class="t"><div id="h-hpb"></div></div></div>
+ </div>
+ <div id="report"></div>
+</div>
+
+<script>
+"use strict";
+/* =====================================================================
+   DATA — chassis & parts. Numbers are simplified but follow real trends.
+   mass t, pw = power draw MW, ht = heat MW while working, cost kCr
+   ===================================================================== */
+const CH={
+ light:{n:'AT-24 Scout',kind:'biped',base:32,max:110,hip:4.0,th:2.1,sh:2.2,torso:[2.9,2.2,2.2],foot:[1.4,.35,2.2],stance:1.3,area:62,spd:78,cost:900,legs:2,
+  d:'Light two-legged frame. Fast, cheap, small feet.',note:'Like a sprinter: light frame, small contact patch. Great on concrete, worse on soft ground.'},
+ heavy:{n:'Atlas Heavy',kind:'biped',base:58,max:200,hip:4.6,th:2.4,sh:2.5,torso:[4.1,3.0,3.0],foot:[2.0,.45,2.8],stance:1.95,area:96,spd:52,cost:1600,legs:2,
+  d:'Big two-legged frame. Carries the most guns of any walker.',note:'Twice the size does not mean twice the strength: see the Square-Cube Law in LEARN.'},
+ raptor:{n:'Raptor Reverse-Joint',kind:'raptor',base:40,max:125,hip:4.5,th:2.2,sh:2.4,torso:[3.0,2.0,3.2],foot:[1.7,.35,2.2],stance:1.45,area:70,spd:92,cost:1200,legs:2,
+  d:'Bird-style legs. Fastest walker, springy stride.',note:'Ostriches use this leg layout: the "knee" you see bending backwards is really an ankle, which stores spring energy.'},
+ quad:{n:'Tarantula Quad',kind:'quad',base:50,max:170,hip:3.0,th:2.6,sh:3.0,torso:[4.0,1.7,4.2],foot:[1.4,.3,1.4],stance:4.6,area:90,spd:55,cost:1400,legs:4,
+  d:'Four spider legs. Very stable, climbs slopes.',note:'Four legs means three can stay planted while one moves: a "statically stable" gait, like a turtle.'},
+ tracked:{n:'Bulwark Tracked',kind:'tracked',base:62,max:220,hip:2.3,th:0,sh:0,torso:[4.0,1.9,4.6],foot:[1.3,.9,5.0],stance:2.3,area:105,spd:44,cost:1300,legs:0,
+  d:'Tank treads instead of legs. Low, tough, spreads its weight.',note:'Tank tracks spread weight over a long strip of ground, which is why a 60-tonne tank can cross soft ground that would trap a truck.'}
+};
+const W={ // arm weapons
+ hand:{n:'Manipulator Hand',m:2,pw:1,ht:0,dmg:0,rof:0,rng:0,rec:0,acc:0,cost:20,d:'Grabs and carries. No weapon.',note:'Robot hands with many joints need precise motors and sensors, which is why they are some of the hardest parts in robotics.'},
+ gatling:{n:'Typhoon Rotary',m:9,pw:12,ht:18,dmg:6,rof:30,rng:1200,rec:6,acc:.55,cost:260,d:'Six spinning barrels, huge fire rate.',note:'Rotary cannons spread heat across several barrels. The GAU-8 on the A-10 jet uses 7 barrels for this reason.'},
+ cannon:{n:'40mm Autocannon',m:11,pw:6,ht:10,dmg:40,rof:3,rng:2000,rec:7,acc:.75,cost:220,d:'Hard-hitting shells, solid all-rounder.',note:'Bigger shells mean bigger recoil: Newton’s third law pushes the mech back every shot.'},
+ rail:{n:'Mjolnir Railgun',m:16,pw:90,ht:45,dmg:260,rof:.4,rng:4000,rec:9,acc:.9,cost:700,d:'Magnetic launcher. Enormous damage, huge power draw.',note:'Real navy railgun prototypes fired metal slugs at more than Mach 6 using electricity alone, but needed massive power banks.'},
+ laser:{n:'Helios Laser',m:7,pw:70,ht:55,dmg:18,rof:8,rng:2500,rec:0,acc:.95,cost:520,d:'No recoil, perfect aim, runs very hot.',note:'Lasers turn only part of their power into the beam; much of the rest becomes waste heat, so cooling decides how long they can fire.'},
+ flamer:{n:'Dragon Flamer',m:5,pw:4,ht:30,dmg:10,rof:10,rng:120,rec:0,acc:.9,cost:120,d:'Very short range, melts armor up close.',note:'Short range weapons are cheap and light, but the mech has to survive getting close.'},
+ rockets:{n:'Hornet Rocket Pod',m:8,pw:3,ht:12,dmg:60,rof:2,rng:1600,rec:3,acc:.6,cost:240,d:'Unguided rockets. Low recoil because the rocket pushes itself.',note:'Rockets carry their own motor, so almost no recoil reaches the launcher.'},
+ claw:{n:'Hydraulic Crusher',m:7,pw:15,ht:4,dmg:120,rof:.8,rng:8,rec:0,acc:1,cost:150,d:'Giant crushing claw. Melee only.',note:'Hydraulics multiply force: a small piston pushing on fluid can drive a big piston with far more force (Pascal’s principle).'},
+ shield:{n:'Riot Shield',m:12,pw:0,ht:0,dmg:0,rof:0,rng:0,rec:0,acc:0,arm:90,cost:140,d:'Huge armored plate. Blocks fire on this side.',note:'Sloped armor makes incoming rounds travel through more metal, a trick used on tanks since WWII.'}
+};
+const SHO={ // shoulder pods
+ none:{n:'Empty',m:0,pw:0,ht:0,cost:0,d:'Nothing mounted.',note:'Every tonne you don’t carry is speed and stability.'},
+ missile:{n:'LRM Missile Rack',m:9,pw:6,ht:14,dmg:90,rof:.6,rng:5000,rec:1,acc:.7,cost:420,wpn:1,d:'Guided missiles, longest direct range.',note:'Guided missiles steer themselves, so accuracy depends on their sensors more than the launcher.'},
+ mortar:{n:'Mortar Tube',m:8,pw:2,ht:8,dmg:140,rof:.3,rng:3000,rec:6,acc:.5,cost:180,wpn:1,d:'Lobs shells high. Big hits, slow, inaccurate.',note:'Mortars fire in an arc: the shell trades speed for height and comes down on targets behind cover.'},
+ radar:{n:'Radar Dome',m:3,pw:18,ht:6,cost:300,acc:.2,d:'Finds targets: +20% accuracy for every weapon.',note:'Radar measures distance by timing radio echoes travelling at the speed of light.'},
+ shieldgen:{n:'Aegis Shield Gen',m:9,pw:60,ht:25,cost:650,shield:300,d:'Energy barrier absorbs 300 damage. Power hungry.',note:'Sci-fi part! The engineering lesson is real though: every system that runs all the time costs power and makes heat.'},
+ ecm:{n:'ECM Mast',m:2,pw:12,ht:4,cost:260,ecm:.3,d:'Jams enemy targeting: 30% fewer hits taken.',note:'Electronic countermeasures flood enemy sensors with noise or fake signals.'},
+ light:{n:'Floodlights',m:1,pw:2,ht:1,cost:30,d:'Looks cool. Helps at night. Almost free.',note:'LEDs turn far more of their power into light than old filament bulbs, which waste most of it as heat.'}
+};
+const ARM={ // armor: t per m2 of frame surface, rating
+ none:{n:'No Armor',den:0,ar:0,cost:0,d:'Bare frame.',note:'Fast and cheap until anything shoots at it.'},
+ composite:{n:'Light Composite',den:.12,ar:30,cost:200,d:'Carbon & aramid layers. Light.',note:'Composites like Kevlar are strong for their weight because long fibres spread the force of an impact.'},
+ ceramic:{n:'Ceramic Tiles',den:.2,ar:55,cost:380,d:'Shatters incoming rounds. Mid weight.',note:'Ceramic plates in body armor work by breaking up the bullet, then a backing layer catches the pieces.'},
+ titanium:{n:'Titanium Plate',den:.26,ar:62,cost:620,d:'Strong & lighter than steel. Expensive.',note:'Titanium is about as strong as many steels at roughly 60% of the weight, but it is hard and costly to machine.'},
+ steel:{n:'Rolled Steel',den:.42,ar:72,cost:150,d:'Cheap and tough. Very heavy.',note:'Steel is cheap and strong, which is why most real vehicles still use it despite its weight.'},
+ reactive:{n:'Reactive Blocks',den:.34,ar:88,cost:520,d:'Explosive tiles blast incoming shots apart.',note:'Real reactive armor uses small explosive bricks that detonate outward to disrupt incoming rockets.'}
+};
+const RX={ // reactors
+ battery:{n:'Solid-State Battery',m:7,out:140,eff:.95,store:80,cost:300,d:'Clean & cool, runs out fast.',note:'Batteries convert stored chemical energy to electricity very efficiently, but hold far less energy per kilo than fuel.'},
+ diesel:{n:'Diesel-Electric',m:12,out:150,eff:.38,store:1400,cost:180,d:'Cheap, heavy, hot. Like a train engine.',note:'Diesel-electric locomotives burn fuel to spin a generator that powers electric motors on the wheels.'},
+ fission:{n:'Micro Fission',m:22,out:300,eff:.33,store:2e5,cost:1100,d:'Huge power for months. Heavy shielding.',note:'Nuclear submarines run for years on one fuel load. The heavy part is the radiation shielding, not the fuel.'},
+ fusion:{n:'Fusion Core',m:14,out:460,eff:.5,store:5e6,cost:2400,d:'The dream reactor. Light and enormous output.',note:'Fusion powers the Sun. On Earth, experiments have released fusion energy, but no practical power plant exists yet.'}
+};
+const COOL={
+ passive:{n:'Passive Only',m:0,pw:0,diss:0,cost:0,d:'The bare frame sheds a little heat.',note:'Every object radiates heat; bigger surface area sheds more.'},
+ fins:{n:'Radiator Fins',m:3,pw:0,diss:45,cost:80,d:'Extra metal surface to shed heat.',note:'Fins add surface area. That is why CPU coolers and motorbike engines are covered in thin metal fins.'},
+ liquid:{n:'Liquid Loop',m:6,pw:5,diss:95,cost:220,d:'Pumped coolant carries heat to radiators.',note:'Water stores far more heat per kilo than air, which is why car engines use a pumped coolant loop.'},
+ cryo:{n:'Cryo Exchanger',m:9,pw:15,diss:160,cost:520,d:'Refrigeration. Massive cooling, costs power.',note:'A fridge does not make cold; it pumps heat from inside to outside, and that pumping takes energy.'}
+};
+const ACT={
+ hydraulic:{n:'Hydraulic',sp:1,pwt:.9,mp:.04,cost:100,d:'Powerful and proven. Like excavators.',note:'Heavy machinery uses hydraulics because fluid under pressure delivers huge, smooth forces.'},
+ servo:{n:'Electric Servo',sp:1.12,pwt:.7,mp:.03,cost:220,d:'Precise, efficient, quieter.',note:'Modern robots mostly use electric motors with gearboxes because they are precise and easy to control.'},
+ muscle:{n:'Artificial Muscle',sp:1.28,pwt:.6,mp:.02,cost:600,d:'Fibres that contract like muscle. Fast.',note:'Labs build artificial muscles from polymers or twisted fibres that shorten when heated or charged.'}
+};
+const FEET={
+ standard:{n:'Standard Pads',m:0,fa:1,tr:1,cost:0,d:'Normal footprint.',note:'Smaller feet = more pressure on the ground.'},
+ wide:{n:'Wide Pads',m:5,fa:1.8,tr:.95,cost:120,d:'Big snowshoe feet. Won’t sink.',note:'Snowshoes work by spreading your weight over more area: same force, lower pressure.'},
+ spiked:{n:'Spiked Grips',m:3,fa:.85,tr:1.35,cost:90,d:'Bites into slopes. Smaller contact patch.',note:'Cleats and crampons concentrate force into points so they dig in instead of sliding.'},
+ mag:{n:'Gyro Stabilizer',m:4,pw:8,fa:1,tr:1.15,stab:.35,cost:400,d:'Spinning gyros resist tipping.',note:'Gyroscopes resist changes to their spin axis. Segways and some ships use them to stay upright.'}
+};
+const HEAD={
+ sensor:{n:'Sensor Head',m:2,pw:3,cost:60,d:'Cameras & lidar. Standard.',note:'Lidar measures distance with laser pulses, the same tech many self-driving cars use.'},
+ cockpit:{n:'Pilot Canopy',m:4,pw:2,cost:90,acc:.05,d:'A human inside. +5% accuracy, needs armor.',note:'Human pilots adapt to surprises well, but need life support and protection.'},
+ ai:{n:'AI Core',m:1,pw:10,cost:500,rof:.1,d:'No pilot. +10% fire rate.',note:'Removing the crew saves weight and space, which is why many modern drones are uncrewed.'},
+ armored:{n:'Armored Pod',m:6,pw:2,cost:120,arm:15,d:'Thick cockpit. +15 armor.',note:'Protecting the crew compartment first is a standard rule in armored vehicle design.'}
+};
+const PAINT={
+ lab:{n:'Lab White',c:['#d7dee8','#2a3446','#00d2ff']},
+ hazard:{n:'Hazard',c:['#e6b422','#1b1b22','#ff5a1f']},
+ urban:{n:'Urban Grey',c:['#7f8794','#2b2f37','#9ad1ff']},
+ jungle:{n:'Jungle',c:['#55704a','#2a3324','#c8ff6a']},
+ crimson:{n:'Crimson',c:['#a8323b','#22161b','#ffb44a']},
+ night:{n:'Night Ops',c:['#2b3140','#11141b','#ff2bd6']}
+};
+const SLOTS=[
+ ['chassis','CHASSIS',CH],['reactor','REACTOR',RX],['cooling','COOLING',COOL],['actuator','ACTUATORS',ACT],['feet','FEET',FEET],['armor','ARMOR',ARM],
+ ['head','HEAD',HEAD],['lArm','LEFT ARM',W],['rArm','RIGHT ARM',W],['lSho','LEFT SHOULDER',SHO],['rSho','RIGHT SHOULDER',SHO],['paint','PAINT',PAINT]
+];
+const PRESETS={
+ 'Scout':{chassis:'raptor',reactor:'battery',cooling:'fins',actuator:'muscle',feet:'standard',armor:'composite',head:'sensor',lArm:'gatling',rArm:'gatling',lSho:'radar',rSho:'none',paint:'urban'},
+ 'Brawler':{chassis:'heavy',reactor:'fission',cooling:'liquid',actuator:'hydraulic',feet:'wide',armor:'steel',head:'armored',lArm:'shield',rArm:'claw',lSho:'ecm',rSho:'none',paint:'hazard'},
+ 'Artillery':{chassis:'quad',reactor:'fission',cooling:'liquid',actuator:'servo',feet:'spiked',armor:'ceramic',head:'ai',lArm:'cannon',rArm:'cannon',lSho:'missile',rSho:'mortar',paint:'jungle'},
+ 'Fortress':{chassis:'tracked',reactor:'fusion',cooling:'cryo',actuator:'servo',feet:'standard',armor:'reactive',head:'cockpit',lArm:'rail',rArm:'laser',lSho:'radar',rSho:'shieldgen',paint:'crimson'}
+};
+let B=Object.assign({},{chassis:'light',reactor:'diesel',cooling:'fins',actuator:'hydraulic',feet:'standard',armor:'composite',head:'sensor',lArm:'gatling',rArm:'cannon',lSho:'missile',rSho:'none',paint:'lab'});
+
+/* =====================================================================
+   ENGINEERING MODEL
+   ===================================================================== */
+const cl=(v,a,b)=>Math.max(a,Math.min(b,v));
+function weapons(b){const L=[];for(const k of['lArm','rArm']){const w=W[b[k]];if(w.dmg)L.push(Object.assign({slot:k},w))}for(const k of['lSho','rSho']){const s=SHO[b[k]];if(s.wpn)L.push(Object.assign({slot:k},s))}return L}
+function analyze(b){
+ const c=CH[b.chassis],rx=RX[b.reactor],co=COOL[b.cooling],ac=ACT[b.actuator],ft=FEET[b.feet],ar=ARM[b.armor],hd=HEAD[b.head],
+  la=W[b.lArm],ra=W[b.rArm],ls=SHO[b.lSho],rs=SHO[b.rSho];
+ const armorM=c.area*ar.den;
+ const partsM=rx.m+co.m+ft.m+hd.m+la.m+ra.m+ls.m+rs.m+armorM;
+ const actM=(c.base+partsM)*ac.mp;
+ const mass=c.base+partsM+actM;
+ const load=mass/c.max;
+ // power
+ const moveP=mass*ac.pwt;
+ const wl=weapons(b);
+ const weapP=wl.reduce((a,w)=>a+w.pw,0);
+ const sysP=(ls.wpn?0:ls.pw)+(rs.wpn?0:rs.pw)+(la.dmg?0:la.pw)+(ra.dmg?0:ra.pw)+co.pw+(ft.pw||0)+hd.pw;
+ const peakP=moveP+weapP+sysP, out=rx.out;
+ const pwrRatio=peakP/out;
+ // heat (MW): reactor waste scales with how hard it works, weapons heat while firing
+ const waste=Math.min(peakP,out)*(1-rx.eff)*.25;
+ const weapH=wl.reduce((a,w)=>a+w.ht,0)+(ls.wpn?0:ls.ht)+(rs.wpn?0:rs.ht);
+ const heatGen=waste+weapH+moveP*.08;
+ const diss=c.area*.35+co.diss;
+ const heatRatio=heatGen/diss;
+ // centre of gravity (x lateral, y up, z forward) from part masses at their mount points
+ const tw=c.torso[0]/2+.9, shY=c.hip+c.torso[1]*.95, tY=c.hip+c.torso[1]/2;
+ const pts=[[c.base*.55,0,tY,0],[c.base*.45,0,c.hip*.45,0],[rx.m,0,tY+.2,-c.torso[2]*.65],[co.m,0,tY,-c.torso[2]*.5],[armorM,0,tY,0],[hd.m,0,c.hip+c.torso[1]+.6,.2],
+  [la.m,-tw,shY-1.2,.5],[ra.m,tw,shY-1.2,.5],[ls.m,-c.torso[0]*.32,c.hip+c.torso[1]+.5,-.2],[rs.m,c.torso[0]*.32,c.hip+c.torso[1]+.5,-.2],[ft.m,0,.2,0]];
+ let M=0,X=0,Y=0,Z=0;for(const[m,x,y,z]of pts){M+=m;X+=m*x;Y+=m*y;Z+=m*z}X/=M;Y/=M;Z/=M;
+ const halfW=c.kind==='tracked'?c.stance+.5:c.kind==='quad'?c.stance:c.stance+c.foot[0]*.5, halfL=c.kind==='quad'?c.stance:c.foot[2]*.5+(c.kind==='raptor'?.5:0);
+ const marg=Math.min(halfW-Math.abs(X),halfL-Math.abs(Z));
+ const tipDeg=Math.atan2(Math.max(0,halfW-Math.abs(X)),Y)*180/Math.PI*(1+(ft.stab||0));
+ // ground pressure kPa (walking: fewer feet down = higher pressure)
+ const fa=(c.kind==='tracked'?c.foot[0]*c.foot[2]*2:c.foot[0]*c.foot[2]*c.legs)*ft.fa;
+ const staticP=mass*9.81/fa;
+ const gaitK=c.kind==='tracked'?1:c.kind==='quad'?1.33:2;
+ const walkP=staticP*gaitK;
+ // speed
+ const refM=c.base+c.max*.45;
+ let speed=c.spd*ac.sp*Math.min(1.18,Math.sqrt(refM/mass));
+ if(pwrRatio>1)speed*=Math.max(.45,1/pwrRatio);
+ if(load>1)speed*=Math.max(.2,1-(load-1)*2.5);
+ // weapons
+ let accBonus=(ls.acc||0)+(rs.acc||0)+(hd.acc||0),rofBonus=hd.rof||0;
+ let dps=0;const wstats=wl.map(w=>{const kick=w.rec/(w.rec+mass*.07);const acc=cl(w.acc*(1-kick*.55)*(1+accBonus),0,.99);const d=w.dmg*w.rof*(1+rofBonus)*acc;dps+=d;return{n:w.n,slot:w.slot,acc,dps:d,rng:w.rng,kick}});
+ const armorR=ar.ar+(hd.arm||0)+(la.arm?18:0)+(ra.arm?18:0);
+ const shield=(ls.shield||0)+(rs.shield||0), ecm=(ls.ecm||0)+(rs.ecm||0);
+ const avgDraw=moveP*.6+sysP+weapP*.25;
+ const endurH=rx.store/Math.max(1,avgDraw);
+ const cost=c.cost+rx.cost+co.cost+ac.cost+ft.cost+ar.cost+hd.cost+la.cost+ra.cost+ls.cost+rs.cost;
+ const maxRng=wl.reduce((a,w)=>Math.max(a,w.rng),0);
+ // warnings
+ const warn=[];
+ if(load>1)warn.push(['r','OVERWEIGHT',`${(mass-c.max).toFixed(1)} t over the frame limit. Legs will buckle under stress.`,'Lighter armor, a smaller reactor, or a bigger chassis.']);
+ else if(load>.9)warn.push(['y','NEAR LIMIT',`${Math.round(load*100)}% of max load. Little safety margin.`,'Real engineers design with a safety factor, often 1.5× or more.']);
+ if(pwrRatio>1)warn.push(['r','POWER DEFICIT',`Needs ${peakP.toFixed(0)} MW at full tilt, reactor makes ${out}. Expect brownouts: slower walking and firing.`,'Bigger reactor, or drop power-hungry parts (railgun, laser, shield gen).']);
+ if(heatRatio>1.25)warn.push(['r','OVERHEATING',`Makes ${heatGen.toFixed(0)} MW of heat but sheds only ${diss.toFixed(0)}. It will shut down mid-fight.`,'Better cooling, or swap lasers/railguns for cooler weapons.']);
+ else if(heatRatio>1)warn.push(['y','RUNS HOT',`Heat ${Math.round(heatRatio*100)}% of cooling. Short bursts only.`,'Radiator fins are a cheap fix.']);
+ if(marg<.25||tipDeg<14)warn.push(['r','TIP RISK',`Centre of gravity is ${Y.toFixed(1)} m high and ${Math.abs(X).toFixed(2)} m off-centre. A hard hit could knock it over.`,'Balance the arms, lower heavy parts, or use a wider chassis or gyro.']);
+ else if(Math.abs(X)>.18)warn.push(['y','LOPSIDED',`${X>0?'Right':'Left'} side ${Math.abs(X).toFixed(2)} m heavy. It leans and its aim suffers.`,'Match weapon weights left and right.']);
+ if(walkP>200)warn.push([walkP>380?'r':'y','SINKS IN SOFT GROUND',`Walking pressure ${walkP.toFixed(0)} kPa. Sand holds ~200, mud ~80.`,'Wide pads, fewer tonnes, or tracks.']);
+ if(!wl.length)warn.push(['y','UNARMED','No weapons fitted. The range will be very quiet.','Fit a weapon to an arm or shoulder.']);
+ if(b.reactor==='battery'&&endurH<1)warn.push(['y','SHORT ENDURANCE',`Battery lasts about ${Math.round(endurH*60)} min of operations.`,'Fine for sprints. Fission or fusion for long missions.']);
+ if(!warn.length)warn.push(['g','ALL SYSTEMS NOMINAL','Mass, power, heat and balance are all inside safe limits.','Try the test range!']);
+ const status=warn.some(w=>w[0]==='r')?'FAULT':warn.some(w=>w[0]==='y')?'CAUTION':'OPTIMAL';
+ return{c,mass,load,peakP,out,pwrRatio,heatGen,diss,heatRatio,cog:[X,Y,Z],marg,tipDeg,halfW,halfL,staticP,walkP,fa,speed,dps,wstats,armorR,shield,ecm,endurH,cost,maxRng,warn,status,armorM,moveP,weapP,sysP}
+}
+
+/* =====================================================================
+   3D SOFTWARE RENDERER — flat-shaded polygons, painter's sort
+   ===================================================================== */
+const I=[1,0,0,0,0,1,0,0,0,0,1,0];
+function mm(a,b){return[a[0]*b[0]+a[1]*b[4]+a[2]*b[8],a[0]*b[1]+a[1]*b[5]+a[2]*b[9],a[0]*b[2]+a[1]*b[6]+a[2]*b[10],a[0]*b[3]+a[1]*b[7]+a[2]*b[11]+a[3],
+ a[4]*b[0]+a[5]*b[4]+a[6]*b[8],a[4]*b[1]+a[5]*b[5]+a[6]*b[9],a[4]*b[2]+a[5]*b[6]+a[6]*b[10],a[4]*b[3]+a[5]*b[7]+a[6]*b[11]+a[7],
+ a[8]*b[0]+a[9]*b[4]+a[10]*b[8],a[8]*b[1]+a[9]*b[5]+a[10]*b[9],a[8]*b[2]+a[9]*b[6]+a[10]*b[10],a[8]*b[3]+a[9]*b[7]+a[10]*b[11]+a[11]]}
+const T=(x,y,z)=>[1,0,0,x,0,1,0,y,0,0,1,z];
+const RX_=a=>{const c=Math.cos(a),s=Math.sin(a);return[1,0,0,0,0,c,-s,0,0,s,c,0]};
+const RY_=a=>{const c=Math.cos(a),s=Math.sin(a);return[c,0,s,0,0,1,0,0,-s,0,c,0]};
+const RZ_=a=>{const c=Math.cos(a),s=Math.sin(a);return[c,-s,0,0,s,c,0,0,0,0,1,0]};
+const ap=(m,p)=>[m[0]*p[0]+m[1]*p[1]+m[2]*p[2]+m[3],m[4]*p[0]+m[5]*p[1]+m[6]*p[2]+m[7],m[8]*p[0]+m[9]*p[1]+m[10]*p[2]+m[11]];
+let FACES=[],MS=[I];
+const cur=()=>MS[MS.length-1];
+function push(m){MS.push(mm(cur(),m))}function pop(){MS.pop()}
+function at(m,f){push(m);f();pop()}
+function face(pts,col,o){FACES.push({p:pts.map(p=>ap(cur(),p)),c:col,e:o&&o.e,a:o&&o.a,ds:!(o&&o.solid)})}
+// box: x in [-w/2,w/2], y in [0,h], z in [-d/2,d/2]; taper scales the top (tx,tz)
+function box(w,h,d,col,o0={}){const o=Object.assign({},o0,{solid:1}),x=w/2,z=d/2,tx=x*(o.tx??1),tz=z*(o.tz??1),sz=o.sz||0,y0=o.y0??0;
+ const b=[[-x,y0,-z],[x,y0,-z],[x,y0,z],[-x,y0,z]],t=[[-tx,y0+h,-tz+sz],[tx,y0+h,-tz+sz],[tx,y0+h,tz+sz],[-tx,y0+h,tz+sz]];
+ const c2=o.c2||col;
+ face([b[0],b[1],b[2],b[3]],c2,o);face([t[3],t[2],t[1],t[0]],col,o);
+ face([t[0],t[1],b[1],b[0]],c2,o);face([t[2],t[3],b[3],b[2]],col,o);
+ face([t[1],t[2],b[2],b[1]],col,o);face([t[3],t[0],b[0],b[3]],col,o)}
+// cylinder along +z from 0 to len
+function cyl(r,len,n,col,o0={}){const o=Object.assign({},o0,{solid:!o0.open});const r2=o.r2??r,P=[];for(let i=0;i<n;i++){const a=i/n*Math.PI*2+(o.rot||0);P.push([Math.cos(a),Math.sin(a)])}
+ for(let i=0;i<n;i++){const a=P[i],b=P[(i+1)%n];face([[a[0]*r,a[1]*r,0],[b[0]*r,b[1]*r,0],[b[0]*r2,b[1]*r2,len],[a[0]*r2,a[1]*r2,len]],col,o)}
+ if(!o.open){face(P.map(a=>[a[0]*r,a[1]*r,0]).reverse(),o.cap0||col,o);face(P.map(a=>[a[0]*r2,a[1]*r2,len]),o.cap||col,o)}}
+function sphere(r,col,o0={},seg=6){const o=Object.assign({},o0,{solid:!o0.half});const R=[];for(let i=0;i<=seg;i++){const v=i/seg*Math.PI*(o.half?.5:1),row=[];for(let j=0;j<seg*2;j++){const u=j/(seg*2)*Math.PI*2;row.push([Math.sin(v)*Math.cos(u)*r,Math.cos(v)*r,Math.sin(v)*Math.sin(u)*r])}R.push(row)}
+ for(let i=0;i<seg;i++)for(let j=0;j<seg*2;j++){const a=R[i][j],b=R[i][(j+1)%(seg*2)],c=R[i+1][(j+1)%(seg*2)],d=R[i+1][j];face([a,b,c,d],col,o)}}
+
+const VIEW={yaw:3.75,pitch:.22,dist:22,ty:4,tx:0,tz:0,rot:true,xray:false,cog:true,drag:false};
+const LIGHT=(()=>{const v=[-.45,.8,.55],l=Math.hypot(...v);return v.map(x=>x/l)})();
+function hex(c){const n=parseInt(c.slice(1),16);return[(n>>16)&255,(n>>8)&255,n&255]}
+const HEXC={};const rgb=c=>HEXC[c]||(HEXC[c]=hex(c));
+function renderScene(ctx,W,H,cam,faces,extra){
+ const cy=Math.cos(cam.yaw),sy=Math.sin(cam.yaw),cp=Math.cos(cam.pitch),sp=-Math.sin(cam.pitch),f=Math.min(W,H)*1.15;
+ const toV=p=>{let x=p[0]-cam.tx,y=p[1]-cam.ty,z=p[2]-cam.tz;let X=x*cy-z*sy,Z=x*sy+z*cy;let Y=y*cp-Z*sp;Z=y*sp+Z*cp;return[X,Y,Z+cam.dist]};
+ const pr=v=>[W/2+v[0]*f/v[2],H*.55-v[1]*f/v[2]];
+ const L=[];
+ for(const F of faces){const v=F.p.map(toV);if(v.some(q=>q[2]<(F.g?3:.3)))continue;
+  const a=v[0],b=v[1],c=v[2],ux=b[0]-a[0],uy=b[1]-a[1],uz=b[2]-a[2],wx=c[0]-a[0],wy=c[1]-a[1],wz=c[2]-a[2];
+  const nx=uy*wz-uz*wy,ny=uz*wx-ux*wz,nz=ux*wy-uy*wx;
+  let cz=0;for(const q of v)cz+=q[2];cz/=v.length;
+  const facing=nx*a[0]+ny*a[1]+nz*a[2];if(facing>=0&&!cam.xray&&!F.ds)continue;
+  // world normal for lighting
+  const A=F.p[0],Bp=F.p[1],C=F.p[2];const n1=[(Bp[1]-A[1])*(C[2]-A[2])-(Bp[2]-A[2])*(C[1]-A[1]),(Bp[2]-A[2])*(C[0]-A[0])-(Bp[0]-A[0])*(C[2]-A[2]),(Bp[0]-A[0])*(C[1]-A[1])-(Bp[1]-A[1])*(C[0]-A[0])];const nl=Math.hypot(...n1)||1;
+  let ndl=(n1[0]*LIGHT[0]+n1[1]*LIGHT[1]+n1[2]*LIGHT[2])/nl;if(F.ds&&facing>=0)ndl=-ndl;
+  L.push({s:v.map(pr),z:F.g?cz+1e6:cz,c:F.c,e:F.e,a:F.a,l:ndl,ny:(F.ds&&facing>=0?-1:1)*n1[1]/nl,back:facing>=0&&!F.ds})}
+ L.sort((p,q)=>q.z-p.z);
+ for(const F of L){const P=F.s;ctx.beginPath();ctx.moveTo(P[0][0],P[0][1]);for(let i=1;i<P.length;i++)ctx.lineTo(P[i][0],P[i][1]);ctx.closePath();
+  if(cam.xray){ctx.fillStyle=F.e?F.c:'rgba(0,210,255,.035)';ctx.fill();ctx.strokeStyle=F.back?'rgba(0,210,255,.12)':'rgba(0,210,255,.55)';ctx.lineWidth=.7;ctx.stroke();continue}
+  if(F.e){ctx.fillStyle=F.c;ctx.shadowColor=F.c;ctx.shadowBlur=10;ctx.fill();ctx.shadowBlur=0;continue}
+  const [r,g,b]=rgb(F.c),k=.34+.62*Math.max(0,F.l)+.12*Math.max(0,-F.l*.4)+(F.ny>.6?.05:0);
+  ctx.fillStyle=`rgba(${Math.min(255,r*k)|0},${Math.min(255,g*k)|0},${Math.min(255,b*k)|0},${F.a??1})`;ctx.fill();
+  ctx.strokeStyle='rgba(0,0,0,.32)';ctx.lineWidth=.6;ctx.stroke()}
+ if(extra)extra(toV,pr)}
+
+/* =====================================================================
+   MECH BUILDER — returns anchors (muzzles, feet) for sims
+   anim: {t, walk(0..), fire{l,r,ls,rs}, lean, sink, fall}
+   ===================================================================== */
+function buildMech(b,an,A){
+ const c=CH[b.chassis],P=PAINT[b.paint].c,MAIN=P[0],DARK=P[1],GLOW=P[2],MET='#5b6577',JOINT='#3a4252';
+ const out={muzzles:[],feet:[]};
+ const t=an.t||0,wk=an.walk||0,moving=an.moving?1:0;
+ const bob=c.kind==='tracked'?0:Math.abs(Math.sin(wk))*.18*moving;
+ const lean=(an.lean||0),hipY=c.hip-(an.sink||0)+bob-(an.buckle||0);
+ push(T(an.x||0,0,an.z||0));push(RY_(an.yaw||0));push(RZ_(an.fall||0));
+ // ---------------- legs / locomotion ----------------
+ const legPair=(side,ph)=>{ // biped / raptor
+  const s=Math.sin(wk+ph)*moving,lift=Math.max(0,Math.sin(wk+ph+1.4))*moving;
+  at(T(side*c.stance,hipY,0),()=>{
+   box(1.2,.9,1.2,JOINT,{y0:-.6});
+   if(c.kind==='raptor'){
+    push(RX_(-.75+s*.45));box(.9,c.th,1.0,MAIN,{y0:-c.th,tx:1.2,tz:1.1});face([[-.5,-c.th*.4,.55],[.5,-c.th*.4,.55],[.5,-c.th*.75,.55],[-.5,-c.th*.75,.55]],GLOW,{e:1});
+    push(T(0,-c.th,0));push(RX_(1.45+lift*.6-(an.buckle?1:0)));box(.7,c.sh,.8,DARK,{y0:-c.sh,tx:1.3});
+    push(T(0,-c.sh,0));push(RX_(-.7-lift*.5-s*.2+(an.buckle?.5:0)));box(.5,1.25,.55,MET,{y0:-1.25});
+    push(T(0,-1.25,0));push(RX_(0));
+    for(const tz of[-.45,0,.45]){at(RY_(tz),()=>box(.32,.28,1.5,DARK,{y0:-.15,sz:.0}))}box(1.2,.25,.55,DARK,{y0:-.15});
+    pop();pop();pop();pop();pop();pop();pop();
+   }else{
+    push(RX_(s*.48));box(1.0*(c===CH.heavy?1.25:1),c.th,1.1,MAIN,{y0:-c.th,tx:1.15,tz:1.1});face([[-.4,-c.th*.35,.56],[.4,-c.th*.35,.56],[.4,-c.th*.55,.56],[-.4,-c.th*.55,.56]],GLOW,{e:1});
+    push(T(0,-c.th,0));box(1.15,.7,1.15,JOINT,{y0:-.35});push(RX_(-lift*.9-(an.buckle?1.1:0)));box(.85*(c===CH.heavy?1.3:1),c.sh,.95,DARK,{y0:-c.sh,tx:1.25,tz:1.2});
+    push(T(0,-c.sh,0));push(RX_(-s*.48+lift*.9+(an.buckle?.6:0)));box(c.foot[0],c.foot[1],c.foot[2],MET,{y0:-c.foot[1],sz:.2,tx:.85});pop();pop();pop();pop();pop();pop()}
+  });
+  out.feet.push([side*c.stance,0,0])};
+ if(c.kind==='biped'||c.kind==='raptor'){legPair(-1,0);legPair(1,Math.PI)}
+ if(c.kind==='quad'){for(const[sx,sz,ph]of[[-1,1,0],[1,1,Math.PI],[-1,-1,Math.PI],[1,-1,0]]){const lift=Math.max(0,Math.sin(wk+ph))*moving,sw=Math.sin(wk+ph)*moving*.3;
+   at(T(sx*c.torso[0]*.45,hipY+.4,sz*c.torso[2]*.42),()=>{box(1,.8,1,JOINT,{y0:-.4});push(RY_(sx*sz*.6+sw*sx));push(RZ_(-sx*(1.0-lift*.35)));
+    box(.7,2.6,.75,MAIN,{y0:0,tx:.8});push(T(0,2.6,0));box(.9,.7,.9,JOINT,{y0:-.35});push(RZ_(-sx*(1.75-lift*.5)+(an.buckle?.3*sx:0)));box(.55,5.2,.6,DARK,{y0:0,tx:.5,tz:.6});
+    push(T(0,5.2,0));box(.6,.3,.6,GLOW,{e:1});pop();pop();pop();pop();pop()});
+   out.feet.push([sx*c.stance,0,sz*c.stance])}}
+ if(c.kind==='tracked'){for(const sx of[-1,1]){at(T(sx*c.stance,0,0),()=>{box(c.foot[0]*1.1,1.5,c.foot[2],DARK,{y0:.05,tz:.92});
+    const sc=(t*(an.moving?3:0))%1;for(let i=-2;i<=2;i++){at(T(sx*c.foot[0]*.57,.75,(i+sc*0)*1.0),()=>at(RY_(Math.PI/2*sx),()=>cyl(.55,.12,10,MET,{rot:wk})))}
+    box(c.foot[0]*1.15,.25,c.foot[2]*1.02,MAIN,{y0:1.5,tz:.95});
+    for(let i=0;i<10;i++){const zz=-c.foot[2]/2+((i/10+sc*.1+wk*.02)%1)*c.foot[2];face([[sx*c.foot[0]*.56,.08,zz],[sx*c.foot[0]*.56,.08,zz+.12],[sx*c.foot[0]*.56,1.45,zz+.12],[sx*c.foot[0]*.56,1.45,zz]],'#0b0f16')}})
+   out.feet.push([sx*c.stance,0,0])}}
+ // ---------------- torso ----------------
+ const [tw,th,td]=c.torso;
+ push(T(0,hipY,0));push(RZ_(lean));
+ box(tw*.6,.6,td*.6,JOINT,{y0:-.3});
+ box(tw,th,td,MAIN,{y0:.2,tx:1.08,tz:.92,sz:.12,c2:DARK});
+ // chest plates + vents
+ face([[-tw*.34,th*.45+.2,td*.5+.02],[tw*.34,th*.45+.2,td*.5+.02],[tw*.28,th*.15+.2,td*.5+.02],[-tw*.28,th*.15+.2,td*.5+.02]],DARK);
+ for(let i=0;i<3;i++)face([[-tw*.22,th*(.2+i*.07)+.2,td*.5+.05],[tw*.22,th*(.2+i*.07)+.2,td*.5+.05],[tw*.22,th*(.23+i*.07)+.2,td*.5+.05],[-tw*.22,th*(.23+i*.07)+.2,td*.5+.05]],i===1?GLOW:'#0b0f16',i===1?{e:1}:{});
+ if(b.armor!=='none'){const ac=b.armor==='reactive'?'#6b5d3a':b.armor==='steel'?'#59606b':b.armor==='titanium'?'#9aa3ad':b.armor==='ceramic'?'#c9c2b6':'#3c4652';
+  for(const sx of[-1,1])at(T(sx*tw*.52,th*.35,0),()=>box(.25,th*.7,td*.85,ac,{tz:.9}));
+  if(b.armor==='reactive')for(let i=0;i<4;i++)for(const sx of[-1,1])at(T(sx*(tw*.2+i%2*.5),th*.65+.2,td*.48),()=>box(.42,.36,.18,ac));}
+ // ---------------- reactor backpack ----------------
+ at(T(0,th*.25+.2,-td*.5),()=>{const r=b.reactor;
+  if(r==='battery'){for(let i=0;i<3;i++)at(T((i-1)*.75,0,-.35),()=>{box(.6,th*.75,.6,DARK);face([[-.2,th*.55,-.31],[.2,th*.55,-.31],[.2,th*.65,-.31],[-.2,th*.65,-.31]],'#7dff6b',{e:1})})}
+  if(r==='diesel'){box(tw*.8,th*.7,1.1,DARK,{y0:0});for(const sx of[-.6,.6])at(T(sx,th*.7,-.55),()=>at(RX_(-Math.PI/2),()=>cyl(.17,1.2,8,MET,{cap:'#111'})))}
+  if(r==='fission'){at(T(0,th*.35,-.6),()=>at(RY_(0),()=>cyl(th*.42,1.2,12,DARK,{cap:MET})));at(T(0,th*.35,-1.82),()=>{face([[-.3,-.3,0],[.3,-.3,0],[.3,.3,0],[-.3,.3,0]].map(p=>[p[0],p[1],0]),'#ffd23f',{e:1})})}
+  if(r==='fusion'){at(T(0,th*.42,-.7),()=>{for(let i=0;i<10;i++){const a=i/10*Math.PI*2,a2=(i+1)/10*Math.PI*2,R=th*.42;at(T(Math.cos(a)*R,Math.sin(a)*R,0),()=>box(.36,.36,.5,MET,{y0:-.18}))}sphere(th*.22,GLOW,{e:1},4)})}});
+ // cooling
+ if(b.cooling==='fins'||b.cooling==='cryo'){for(let i=0;i<5;i++)for(const sx of[-1,1])at(T(sx*(tw*.5+.12),th*.3+i*.28,-td*.15),()=>box(.5,.06,td*.55,b.cooling==='cryo'?'#bfe9ff':MET))}
+ if(b.cooling==='liquid'){for(const sx of[-1,1])at(T(sx*tw*.42,th*.75,-td*.52),()=>at(RX_(Math.PI/2),()=>cyl(.12,th*.6,6,'#2f7de1')))}
+ if(b.cooling==='cryo')at(T(0,th+.2,-td*.42),()=>box(tw*.5,.35,.6,'#bfe9ff'));
+ // ---------------- head ----------------
+ at(T(0,th+.2,td*.1),()=>{const h=b.head;
+  if(h==='sensor'){box(1.1,.75,1.2,DARK,{tx:.85,tz:.9});face([[-.45,.55,.61],[.45,.55,.61],[.4,.3,.61],[-.4,.3,.61]],GLOW,{e:1});at(T(.4,.75,-.3),()=>at(RX_(-Math.PI/2),()=>cyl(.04,.9,4,MET)))}
+  if(h==='cockpit'){box(1.5,.6,1.6,MAIN,{tx:.9});at(T(0,.6,.1),()=>box(1.2,.5,1.2,'#8fd8ff',{tx:.6,tz:.5,sz:.15,a:.85}))}
+  if(h==='ai'){at(T(0,.55,0),()=>sphere(.5,GLOW,{e:1},4));box(.9,.3,.9,DARK)}
+  if(h==='armored'){box(1.4,.9,1.4,DARK,{tx:.8,tz:.8});face([[-.5,.6,.71],[.5,.6,.71],[.5,.5,.71],[-.5,.5,.71]],GLOW,{e:1})}});
+ // ---------------- shoulders ----------------
+ const shoulder=(side,k,fire)=>{const s=b[k];if(s==='none')return;at(T(side*tw*.32,th+.25,-.1),()=>{
+  if(s==='missile'){box(1.3,1.0,1.5,DARK,{y0:0});for(let i=0;i<3;i++)for(let j=0;j<2;j++)face([[-.5+i*.35,.25+j*.4,.76],[-.25+i*.35,.25+j*.4,.76],[-.25+i*.35,.5+j*.4,.76],[-.5+i*.35,.5+j*.4,.76]],fire&&((i+j)%2)?'#ffb44a':'#0b0f16',fire?{e:1}:{});out.muzzles.push({k,p:ap(cur(),[0,.6,.8])})}
+  if(s==='mortar'){box(1,.5,1,DARK);at(T(0,.4,0),()=>at(RX_(-.9),()=>cyl(.28,1.8,10,MAIN,{cap:'#0b0f16'})));out.muzzles.push({k,p:ap(cur(),[0,1.8,1.1])})}
+  if(s==='radar'){box(.5,.6,.5,MET);at(T(0,.6,0),()=>{at(RY_(t*1.5),()=>{sphere(.75,MAIN,{half:1},5)})})}
+  if(s==='shieldgen'){box(.9,.5,.9,DARK);for(let i=0;i<3;i++)at(T(0,.6+i*.3,0),()=>at(RX_(Math.PI/2),()=>cyl(.5-i*.1,.08,10,GLOW,{e:1})))}
+  if(s==='ecm'){box(.6,.4,.6,DARK);at(T(0,.4,0),()=>at(RX_(-Math.PI/2),()=>cyl(.05,2.4,4,MET)));at(T(0,2.2,0),()=>box(.8,.08,.08,GLOW,{e:1}))}
+  if(s==='light'){box(.9,.4,.5,DARK);for(const lx of[-.22,.22])at(T(lx,.2,.26),()=>cyl(.17,.08,8,'#fff8d8',{e:1}))}})};
+ shoulder(-1,'lSho',an.fire&&an.fire.lSho);shoulder(1,'rSho',an.fire&&an.fire.rSho);
+ // ---------------- arms ----------------
+ const arm=(side,k,fire)=>{const w=b[k],rc=fire?-.35:0;at(T(side*(tw*.5+.55),th*.82,0),()=>{
+  box(1.0,1.0,1.1,JOINT,{y0:-.5});box(.55,.4,.8,MAIN,{y0:.35});
+  push(RX_(-.15+Math.sin(t*1.3+side)*.03+rc*.2));box(.8,1.7,.85,MAIN,{y0:-1.8,tx:1.1});push(T(0,-1.75,0));box(.8,.6,.8,JOINT,{y0:-.3});push(RX_(-1.35));push(T(0,0,rc));
+  box(.75,1.6,.8,DARK,{y0:-1.6,tx:.9});push(T(0,-1.6,0));push(RX_(Math.PI/2));// now +z points forward along weapon
+  const mz=l=>out.muzzles.push({k,p:ap(cur(),[0,0,l])});
+  if(w==='hand'){for(const fx of[-.22,0,.22])at(T(fx,0,0),()=>box(.15,.15,.6,MET,{y0:-.08}));box(.6,.3,.35,MET,{y0:-.15})}
+  if(w==='gatling'){at(T(0,0,-.2),()=>cyl(.45,1.0,8,DARK,{cap:MET}));const sp=t*(fire?30:2);for(let i=0;i<6;i++){const a=i/6*Math.PI*2+sp;at(T(Math.cos(a)*.24,Math.sin(a)*.24,.8),()=>cyl(.08,1.7,5,MET,{cap:'#111'}))}at(T(0,0,2.2),()=>cyl(.36,.12,8,DARK,{open:1}));mz(2.6)}
+  if(w==='cannon'){at(T(0,0,-.3),()=>box(.8,.8,1.5,DARK,{y0:-.4}));at(T(0,.05,1.0),()=>cyl(.17,2.4,8,MET,{cap:'#111'}));at(T(0,.05,3.3),()=>cyl(.27,.4,8,DARK,{cap:'#111'}));mz(3.8)}
+  if(w==='rail'){at(T(0,0,-.3),()=>box(.8,.9,1.6,DARK,{y0:-.45}));for(const ry of[-.22,.22])at(T(0,ry,1.2),()=>box(.25,.12,3.2,MET,{y0:-.06}));for(let i=0;i<4;i++)at(T(0,0,1.4+i*.7),()=>cyl(.35,.12,8,GLOW,{e:1,open:1}));mz(4.5)}
+  if(w==='laser'){at(T(0,0,-.2),()=>cyl(.38,1.3,10,DARK,{cap:MET}));at(T(0,0,1.1),()=>cyl(.25,.9,10,MET,{r2:.32}));at(T(0,0,2.0),()=>cyl(.32,.05,10,GLOW,{e:1}));for(const a of[0,1.57,3.14,4.71])at(RZ_(a),()=>at(T(0,.4,.4),()=>box(.06,.35,1.0,MAIN)));mz(2.1)}
+  if(w==='flamer'){at(T(0,-.45,-.2),()=>cyl(.32,1.2,8,'#b33a2a',{cap:MET}));at(T(0,.1,0),()=>cyl(.15,1.8,6,MET,{r2:.22,cap:'#111'}));mz(1.9)}
+  if(w==='rockets'){at(T(0,0,-.2),()=>box(1.1,1.1,1.6,DARK,{y0:-.55}));for(let i=0;i<3;i++)for(let j=0;j<3;j++)face([[-.4+i*.3,-.4+j*.3,1.42],[-.2+i*.3,-.4+j*.3,1.42],[-.2+i*.3,-.2+j*.3,1.42],[-.4+i*.3,-.2+j*.3,1.42]].map(p=>[p[0],p[1],p[2]-.02]),'#0b0f16');mz(1.5)}
+  if(w==='claw'){box(.7,.5,.9,MET,{y0:-.25});for(const fx of[-1,1])at(T(fx*.28,0,.4),()=>at(RY_(fx*(.25+Math.sin(t*2)*.08+(fire?.3:0))),()=>{box(.2,.3,1.3,DARK,{y0:-.15});at(T(0,0,1.25),()=>at(RY_(-fx*.7),()=>box(.18,.26,.6,MAIN,{y0:-.13})))}));mz(1.6)}
+  if(w==='shield'){at(T(side*.2,0,.3),()=>at(RX_(Math.PI/2),()=>{box(.25,4.0,2.6,MAIN,{y0:-2.4,tz:.85});face([[side*.14,-.6,-.6],[side*.14,-.6,.6],[side*.14,-1.4,.6],[side*.14,-1.4,-.6]],GLOW,{e:1})}))}
+  pop();pop();pop();pop();pop();pop()})};
+ arm(-1,'lArm',an.fire&&an.fire.lArm);arm(1,'rArm',an.fire&&an.fire.rArm);
+ pop();pop();pop();pop();pop();
+ return out}
+
+/* =====================================================================
+   WORKBENCH VIEW
+   ===================================================================== */
+const cv=document.getElementById('cv'),cx=cv.getContext('2d');let CW=0,CHH=0,DPR=1;
+function fit(){DPR=Math.min(2,devicePixelRatio||1);const r=cv.getBoundingClientRect();CW=r.width;CHH=r.height;cv.width=CW*DPR;cv.height=CHH*DPR}
+let AN=null,tick=0;
+function drawBench(){if(cv.width<4)return fit();cx.setTransform(DPR,0,0,DPR,0,0);cx.clearRect(0,0,CW,CHH);
+ const c=CH[B.chassis];VIEW.ty=c.hip*.8+1.2;VIEW.dist=c.kind==='quad'||c.kind==='tracked'?16:c===CH.heavy?17.5:15;VIEW.dist*=VIEW.zoom||1;
+ if(VIEW.rot&&!VIEW.drag)VIEW.yaw+=.004;
+ FACES=[];MS=[I];const lean=cl(-AN.cog[0]*.18,-.12,.12);
+ buildMech(B,{t:tick,lean,buckle:AN.load>1.15?.25:0},AN);
+ const cam={yaw:VIEW.yaw,pitch:VIEW.pitch,dist:VIEW.dist,tx:0,ty:VIEW.ty,tz:0,xray:VIEW.xray};
+ // ground grid + shadow + support polygon
+ const cyw=Math.cos(cam.yaw),syw=Math.sin(cam.yaw),cp=Math.cos(cam.pitch),sp=-Math.sin(cam.pitch),f=Math.min(CW,CHH)*1.15;
+ const P=p=>{let x=p[0],y=p[1]-cam.ty,z=p[2];let X=x*cyw-z*syw,Z=x*syw+z*cyw;let Y=y*cp-Z*sp;Z=y*sp+Z*cp+cam.dist;return Z<.3?null:[CW/2+X*f/Z,CHH*.55-Y*f/Z]};
+ cx.lineWidth=1;for(let i=-10;i<=10;i++){for(const[a,bp]of[[[i*2,0,-20],[i*2,0,20]],[[-20,0,i*2],[20,0,i*2]]]){const A=P(a),Bp=P(bp);if(!A||!Bp)continue;cx.strokeStyle=i===0?'rgba(0,210,255,.3)':'rgba(0,210,255,.09)';cx.beginPath();cx.moveTo(A[0],A[1]);cx.lineTo(Bp[0],Bp[1]);cx.stroke()}}
+ const shadow=[];for(let i=0;i<20;i++){const a=i/20*Math.PI*2;const q=P([Math.cos(a)*(AN.halfW+1),0,Math.sin(a)*(AN.halfL+1.2)]);if(q)shadow.push(q)}
+ cx.fillStyle='rgba(0,0,0,.45)';cx.beginPath();shadow.forEach((q,i)=>i?cx.lineTo(q[0],q[1]):cx.moveTo(q[0],q[1]));cx.fill();
+ if(VIEW.cog){const hw=AN.halfW,hl=AN.halfL,bad=AN.marg<.25;const poly=[[-hw,0,-hl],[hw,0,-hl],[hw,0,hl],[-hw,0,hl]].map(P);if(poly.every(Boolean)){cx.strokeStyle=bad?'rgba(244,63,94,.8)':'rgba(52,211,153,.7)';cx.setLineDash([5,4]);cx.beginPath();poly.forEach((q,i)=>i?cx.lineTo(q[0],q[1]):cx.moveTo(q[0],q[1]));cx.closePath();cx.stroke();cx.setLineDash([])}}
+ renderScene(cx,CW,CHH,cam,FACES,(toV,pr)=>{if(!VIEW.cog)return;const[gx,gy,gz]=AN.cog;const v=toV([gx,gy,gz]),g=toV([gx,0,gz]);if(v[2]<.3)return;const a=pr(v),b2=pr(g),bad=AN.marg<.25;
+  cx.strokeStyle=bad?'#f43f5e':'#fbbf24';cx.setLineDash([3,3]);cx.beginPath();cx.moveTo(a[0],a[1]);cx.lineTo(b2[0],b2[1]);cx.stroke();cx.setLineDash([]);
+  cx.fillStyle=bad?'#f43f5e':'#fbbf24';cx.shadowColor=cx.fillStyle;cx.shadowBlur=12;cx.beginPath();cx.arc(a[0],a[1],5,0,7);cx.fill();cx.beginPath();cx.arc(b2[0],b2[1],3,0,7);cx.fill();cx.shadowBlur=0;
+  cx.font='700 9px ui-monospace,monospace';cx.fillText('CoG',a[0]+8,a[1]+3)})}
+// orbit + pinch
+(()=>{const pts=new Map();let pd=0;cv.addEventListener('pointerdown',e=>{cv.setPointerCapture(e.pointerId);pts.set(e.pointerId,[e.clientX,e.clientY]);VIEW.drag=true});
+ cv.addEventListener('pointermove',e=>{if(!pts.has(e.pointerId))return;const p=pts.get(e.pointerId);if(pts.size===1){VIEW.yaw-=(e.clientX-p[0])*.01;VIEW.pitch=cl(VIEW.pitch+(e.clientY-p[1])*.006,-.1,1.1)}else{const ps=[...pts.values()];const d0=Math.hypot(ps[0][0]-ps[1][0],ps[0][1]-ps[1][1]);pts.set(e.pointerId,[e.clientX,e.clientY]);const qs=[...pts.values()];const d1=Math.hypot(qs[0][0]-qs[1][0],qs[0][1]-qs[1][1]);VIEW.zoom=cl((VIEW.zoom||1)*d0/d1,.55,1.8);return}pts.set(e.pointerId,[e.clientX,e.clientY])});
+ const up=e=>{pts.delete(e.pointerId);if(!pts.size)VIEW.drag=false};cv.addEventListener('pointerup',up);cv.addEventListener('pointercancel',up);
+ cv.addEventListener('wheel',e=>{e.preventDefault();VIEW.zoom=cl((VIEW.zoom||1)*(1+e.deltaY*.001),.55,1.8)},{passive:false})})();
+function tog(k){VIEW[k]=!VIEW[k];document.getElementById('t-'+k).classList.toggle('on',VIEW[k])}
+
+/* =====================================================================
+   UI
+   ===================================================================== */
+const $=id=>document.getElementById(id);
+const fmt=(v,d=0)=>v.toLocaleString(undefined,{maximumFractionDigits:d,minimumFractionDigits:d});
+function toast(m){const t=$('toast');t.textContent=m;t.classList.add('on');clearTimeout(toast.h);toast.h=setTimeout(()=>t.classList.remove('on'),1700)}
+function specLine(k,o){
+ if(k==='chassis')return`<em>${o.base} t</em> frame · max <em>${o.max} t</em> · ${o.spd} km/h base · ${o.cost} kCr`;
+ if(k==='reactor')return`<em>${o.out} MW</em> · ${Math.round(o.eff*100)}% efficient · ${o.m} t · ${o.cost} kCr`;
+ if(k==='cooling')return`sheds <em>+${o.diss} MW</em> heat · ${o.m} t${o.pw?` · ${o.pw} MW pump`:''} · ${o.cost} kCr`;
+ if(k==='actuator')return`speed ×${o.sp} · <em>${o.pwt} MW per tonne</em> · ${o.cost} kCr`;
+ if(k==='feet')return`foot area ×${o.fa} · grip ×${o.tr} · ${o.m} t · ${o.cost} kCr`;
+ if(k==='armor'){const c=CH[B.chassis];return`<em>${(c.area*o.den).toFixed(1)} t</em> on this frame (${o.den} t/m² × ${c.area} m²) · rating ${o.ar} · ${o.cost} kCr`}
+ if(k==='paint')return'Cosmetic. Engineers still argue about it.';
+ if(o.dmg)return`<em>${o.m} t</em> · ${o.pw} MW · ${o.ht} MW heat · ${o.dmg} dmg × ${o.rof}/s · ${fmt(o.rng)} m range · recoil ${o.rec}/10 · ${o.cost} kCr`;
+ return`<em>${o.m||0} t</em>${o.pw?` · ${o.pw} MW`:''}${o.ht?` · ${o.ht} MW heat`:''}${o.arm?` · +${o.arm} armor`:''} · ${o.cost||0} kCr`}
+function renderBuild(){const p=$('p-build');p.innerHTML=SLOTS.map(([k,l,tab])=>{const o=tab[B[k]];
+ return`<div class="slot" id="s-${k}"><div class="sh"><span class="l">${l}</span><span class="n">${o.n}</span></div>
+ <div class="chips">${Object.entries(tab).map(([id,v])=>k==='paint'?`<button class="chip sw${B[k]===id?' on':''}" title="${v.n}" style="background:linear-gradient(135deg,${v.c[0]} 50%,${v.c[1]} 50%);${B[k]===id?'outline:2px solid '+v.c[2]+';outline-offset:2px':''}" onclick="setPart('${k}','${id}')"></button>`:`<button class="chip${B[k]===id?' on':''}" onclick="setPart('${k}','${id}')">${v.n}</button>`).join('')}</div>
+ <div class="spec">${o.d||''}<br>${specLine(k,o)}</div>${o.note?`<div class="note">💡 ${o.note}</div>`:''}</div>`}).join('')}
+function setPart(k,id){B[k]=id;AN=analyze(B);renderBuild();renderStats();renderLearn();updateBars();const el=$('s-'+k);if(el){const ch=el.querySelector('.chip.on');ch&&ch.scrollIntoView({block:'nearest',inline:'center'})}try{localStorage.setItem('mechlab.cur',JSON.stringify(B))}catch(e){}}
+function col(r,g,y){return r?'#f43f5e':y?'#fbbf24':'#00d2ff'}
+function updateBars(){const a=AN;
+ $('bm').style.width=Math.min(100,a.load*100)+'%';$('bm').style.background=col(a.load>1,0,a.load>.9);$('bm-l').textContent=`${a.mass.toFixed(0)}/${a.c.max}t`;
+ $('bp').style.width=Math.min(100,a.pwrRatio*100)+'%';$('bp').style.background=col(a.pwrRatio>1,0,a.pwrRatio>.9);$('bp-l').textContent=`${a.peakP.toFixed(0)}/${a.out}MW`;
+ $('bh').style.width=Math.min(100,a.heatRatio*100)+'%';$('bh').style.background=col(a.heatRatio>1.25,0,a.heatRatio>1);$('bh-l').textContent=`${Math.round(a.heatRatio*100)}%`;
+ const bd=$('badge');bd.textContent=a.status==='FAULT'?'⚠ '+a.warn.find(w=>w[0]==='r')[1]:a.status==='CAUTION'?'⚠ '+a.warn.find(w=>w[0]==='y')[1]:'● OPTIMAL';bd.style.color=a.status==='FAULT'?'#f43f5e':a.status==='CAUTION'?'#fbbf24':'#34d399';
+ $('vname').textContent=`${CH[B.chassis].n.toUpperCase()} // ${fmt(a.cost)} kCr`}
+function met(k,v,s,cls){return`<div class="met ${cls||''}"><div class="k">${k}</div><div class="v">${v}</div><div class="s">${s}</div></div>`}
+function renderStats(){const a=AN;const soil=a.walkP<80?'Mud OK':a.walkP<200?'Sand OK, mud no':a.walkP<400?'Gravel OK, sand no':'Concrete only';
+ const en=a.endurH>24*60?'years':a.endurH>48?`${Math.round(a.endurH/24)} days`:a.endurH>1.5?`${a.endurH.toFixed(1)} h`:`${Math.round(a.endurH*60)} min`;
+ $('p-stats').innerHTML=`<div class="mgrid">
+ ${met('TOTAL MASS',`${a.mass.toFixed(1)} t`,`Limit ${a.c.max} t (${Math.round(a.load*100)}%). Armor alone: ${a.armorM.toFixed(1)} t.`,a.load>1?'bad':a.load>.9?'mid':'ok')}
+ ${met('POWER BUDGET',`${a.peakP.toFixed(0)} / ${a.out} MW`,`Walking ${a.moveP.toFixed(0)} + weapons ${a.weapP.toFixed(0)} + systems ${a.sysP.toFixed(0)} MW.`,a.pwrRatio>1?'bad':a.pwrRatio>.9?'mid':'ok')}
+ ${met('HEAT BALANCE',`${a.heatGen.toFixed(0)} / ${a.diss.toFixed(0)} MW`,`Heat made vs. heat shed while fighting. Above 100% it builds up.`,a.heatRatio>1.25?'bad':a.heatRatio>1?'mid':'ok')}
+ ${met('TOP SPEED',`${a.speed.toFixed(0)} km/h`,`From power-to-weight and actuators. Fully loaded mechs are slower.`,a.speed<30?'bad':a.speed<45?'mid':'ok')}
+ ${met('GROUND PRESSURE',`${a.walkP.toFixed(0)} kPa`,`Walking, on ${a.fa.toFixed(1)} m² of feet. ${soil}.`,a.walkP>380?'bad':a.walkP>200?'mid':'ok')}
+ ${met('TIP ANGLE',`${a.tipDeg.toFixed(0)}°`,`How far it can lean before falling. CoG ${a.cog[1].toFixed(1)} m high, ${Math.abs(a.cog[0]).toFixed(2)} m off-centre.`,a.marg<.25||a.tipDeg<14?'bad':a.tipDeg<22?'mid':'ok')}
+ ${met('FIREPOWER',`${a.dps.toFixed(0)} DPS`,`Damage per second after recoil & accuracy. Max range ${fmt(a.maxRng)} m.`,a.dps<20?'bad':a.dps<60?'mid':'ok')}
+ ${met('PROTECTION',`${a.armorR}${a.shield?` +${a.shield}🛡`:''}`,`Armor rating ${a.ecm?`· ECM dodges ${Math.round(a.ecm*100)}%`:''}`,a.armorR<30?'bad':a.armorR<55?'mid':'ok')}
+ ${met('ENDURANCE',en,`On ${RX[B.reactor].n} at normal operations.`,a.endurH<1?'mid':'ok')}
+ ${met('COST',`${fmt(a.cost)} kCr`,`Thousand credits. Real-world prototype mechs would cost far more!`,'')}
+ </div>
+ <h3>WEAPON BREAKDOWN</h3>${a.wstats.length?a.wstats.map(w=>`<div class="rrow"><span>${w.n} <span class="mono" style="color:#64748b;font-size:11px">${w.slot}</span></span><span>${w.dps.toFixed(0)} DPS · ${Math.round(w.acc*100)}% acc</span></div>`).join(''):'<p class="spec">No weapons fitted.</p>'}
+ <h3>DIAGNOSTICS</h3><div class="warns">${a.warn.map(w=>`<div class="w ${w[0]==='y'?'y':w[0]==='g'?'g':''}"><div><b>${w[1]}</b><br>${w[2]}<br><span style="color:#94a3b8">Fix: ${w[3]}</span></div></div>`).join('')}</div>`}
+function renderLearn(){const a=AN,c=CH[B.chassis];
+ const L=[
+ ['📐 Square-Cube Law','When you scale something up, its <b>strength</b> (cross-section area) grows with size², but its <b>weight</b> (volume) grows with size³. Double a mech’s size and it gets 4× stronger but 8× heavier.<span class="eq">strength ∝ L² · weight ∝ L³</span>That is why giant mechs are hard, and why ants can lift many times their body weight while elephants can’t.',`Your frame: ${c.n}, ${c.base} t empty, rated to ${c.max} t.`],
+ ['⚖️ Centre of Gravity','The CoG is the average position of all the mass. A machine stays upright while the CoG sits above its <b>support polygon</b>, the shape outlined by its feet (the dashed box in the preview).<span class="eq">tip angle = atan(distance to edge ÷ CoG height)</span>High CoG or narrow stance = tips easily. Heavy weapon on one side = lopsided.',`Your CoG: ${a.cog[1].toFixed(2)} m high, ${a.cog[0].toFixed(2)} m sideways → tips at ${a.tipDeg.toFixed(0)}°.`],
+ ['🦶 Ground Pressure','Pressure is force divided by area. The same mech on bigger feet presses less on the ground.<span class="eq">P = (mass × 9.81) ÷ foot area</span>When walking, a biped has only one foot down, so the pressure doubles. Soft ground holds roughly: mud 80 kPa, sand 200, gravel 400, concrete 2,000+.',`Your mech: ${a.staticP.toFixed(0)} kPa standing, ${a.walkP.toFixed(0)} kPa walking.`],
+ ['⚡ Power Budget','Every system draws power at the same time: legs, guns, sensors, pumps. Add them up and compare with what the reactor makes. If demand is bigger, voltage sags (a <b>brownout</b>) and everything slows.<span class="eq">margin = reactor output − Σ draws</span>Moving mass takes power, so heavier mechs need bigger reactors just to walk.',`Peak demand ${a.peakP.toFixed(0)} MW of ${a.out} MW available.`],
+ ['🔥 Heat Rejection','No machine is 100% efficient. The lost energy becomes heat, which has to be dumped through surfaces (radiators, fins, coolant). If heat comes in faster than it goes out, temperature climbs until parts fail.<span class="eq">temperature rises if heat in > heat out</span>Lasers and railguns are powerful but very hot.',`You make ${a.heatGen.toFixed(0)} MW of heat and shed ${a.diss.toFixed(0)} MW.`],
+ ['💥 Recoil (Newton’s 3rd Law)','Every action has an equal and opposite reaction. A gun pushes its shell forward and the shell pushes the gun back. A heavier platform barely moves, so it stays on target.<span class="eq">platform kick ∝ shell momentum ÷ platform mass</span>Rockets and lasers produce almost no recoil.',`Your weapons: ${a.wstats.map(w=>`${w.n} ${Math.round(w.kick*100)}% kick`).join(', ')||'none'}.`],
+ ['🚀 Power-to-Weight','How fast something accelerates depends on how much power it has per tonne. Sports cars and fighter jets have huge power-to-weight ratios.<span class="eq">P/W = power ÷ mass</span>',`Yours: ${(a.out/a.mass).toFixed(1)} MW per tonne → ${a.speed.toFixed(0)} km/h.`]];
+ $('p-learn').innerHTML=`<p class="spec" style="margin:0 0 10px">The real physics behind your build. Each card updates live as you swap parts.</p>`+L.map((l,i)=>`<details ${i===0?'open':''}><summary>${l[0]}</summary><div class="b">${l[1]}<span class="yours">▸ ${l[2]}</span></div></details>`).join('')}
+let SAVES=[];try{SAVES=JSON.parse(localStorage.getItem('mechlab.saves')||'[]')}catch(e){}
+function renderHangar(){$('p-hangar').innerHTML=`<h3 style="margin-top:0">PRESET BUILDS</h3><div class="row">${Object.keys(PRESETS).map(k=>`<button class="btn" onclick="loadB(PRESETS['${k}'],'${k} loaded')">${k}</button>`).join('')}</div>
+ <h3>SAVED BUILDS</h3>${SAVES.length?SAVES.map((s,i)=>`<div class="save"><div class="i"><b>${s.name}</b><span>${CH[s.b.chassis].n} · ${s.grade?'TEST '+s.grade+' · ':''}${new Date(s.d).toLocaleDateString()}</span></div><button class="btn cy" onclick="loadB(SAVES[${i}].b,'Loaded')">LOAD</button><button class="btn" onclick="delSave(${i},this)">✕</button></div>`).join(''):'<p class="spec">Nothing saved yet.</p>'}
+ <div class="row"><button class="btn cy" onclick="saveB()">SAVE CURRENT BUILD</button></div>
+ <h3>SHARE / BACKUP</h3><div class="row"><button class="btn" onclick="copyCode()">COPY BUILD CODE</button><button class="btn" onclick="importCode()">LOAD FROM CODE</button></div>
+ <textarea id="code" placeholder="Paste a build code or blueprint JSON here, then tap LOAD FROM CODE"></textarea>
+ <p class="spec">Build codes are JSON blueprints. Send one to a friend, they paste it here and get your exact mech.</p>`}
+function loadB(b,msg){B=Object.assign({},B,b);setPart('chassis',B.chassis);renderHangar();toast(msg);tabTo('build')}
+function saveB(){let name='Build '+(SAVES.length+1);const nm=document.getElementById('code').value.trim();SAVES.unshift({name:CH[B.chassis].n.split(' ')[0]+' #'+(SAVES.length+1),b:Object.assign({},B),d:Date.now(),grade:LAST_GRADE});SAVES=SAVES.slice(0,12);try{localStorage.setItem('mechlab.saves',JSON.stringify(SAVES))}catch(e){}renderHangar();toast('Saved to hangar')}
+function delSave(i,b){if(!b.dataset.arm){b.dataset.arm=1;b.textContent='SURE?';return}SAVES.splice(i,1);try{localStorage.setItem('mechlab.saves',JSON.stringify(SAVES))}catch(e){}renderHangar()}
+function copyCode(){const code=JSON.stringify({lab:'futurelab-mech',v:1,build:B});$('code').value=code;try{navigator.clipboard.writeText(code).then(()=>toast('Build code copied'),()=>toast('Code shown below. Copy it manually.'))}catch(e){toast('Code shown below. Copy it manually.')}}
+function importCode(){try{const j=JSON.parse($('code').value);const b=j.build||j;const nb={};for(const[k,,tab]of SLOTS){if(b[k]&&tab[b[k]])nb[k]=b[k]}
+ // accept the original v0.1 blueprint format too
+ if(j.loadout){const map={biped_light:'light',biped_heavy:'heavy',quad:'quad'};if(map[j.chassis])nb.chassis=map[j.chassis];const lo=j.loadout,wm={gatling:'gatling',cannon:'cannon',empty:'hand'},sm={missile:'missile',shield:'shieldgen',empty:'none'},am={reactive:'reactive',composite:'composite',heavy:'steel'};if(wm[lo.leftArm])nb.lArm=wm[lo.leftArm];if(wm[lo.rightArm])nb.rArm=wm[lo.rightArm];if(sm[lo.shoulder])nb.lSho=sm[lo.shoulder];if(am[lo.armor])nb.armor=am[lo.armor]}
+ if(!Object.keys(nb).length)throw 0;loadB(nb,'Build loaded')}catch(e){toast('That code didn’t parse')}}
+function tabTo(t){for(const b of document.querySelectorAll('.tab'))b.classList.toggle('on',b.dataset.t===t);for(const p of['build','stats','learn','hangar'])$('p-'+p).hidden=p!==t;if(t==='hangar')renderHangar()}
+
+/* =====================================================================
+   TEST RANGE — 3 stages driven by the analysis numbers
+   ===================================================================== */
+const rcv=$('rcv'),rx=rcv.getContext('2d');let RW=0,RH=0,RD=1,R=null,LAST_GRADE=null;
+const SOILS=[['CONCRETE',2000,'#3b4352'],['GRAVEL',400,'#5c5446'],['DRY SAND',200,'#b8955a'],['MUD',80,'#4a3b2a'],['ROCK SLOPE 20°',2000,'#5d6470']];
+function rfit(){RD=Math.min(2,devicePixelRatio||1);RW=rcv.clientWidth;RH=rcv.clientHeight;rcv.width=RW*RD;rcv.height=RH*RD}
+function startRange(){AN=analyze(B);$('range').classList.add('on');$('report').classList.remove('on');rfit();
+ const a=AN,wl=weapons(B);
+ R={t:0,stage:1,z:0,walk:0,heat:0,hp:100,shield:a.shield,shots:0,hits:0,dmg:0,shut:0,shutN:0,peakHeat:0,bog:0,fell:0,fellT:0,dist:0,spdSum:0,spdN:0,
+  segs:[],targets:[],tracers:[],parts:[],incoming:[],wcd:wl.map(()=>Math.random()*.5),wl,alert:'',alertT:0,brown:a.pwrRatio>1?Math.max(.45,1/a.pwrRatio):1,buckle:0,soilLog:{},slopeOK:null,shock:0,camYaw:-1.15};
+ for(let i=0;i<SOILS.length;i++)R.segs.push({z0:i*34,z1:i*34+34,s:SOILS[i]});
+ if(a.load>1.12){R.buckle=1;flash('⚠ STRUCTURAL FAULT','#f43f5e')}
+ last=performance.now();requestAnimationFrame(rloop)}
+function flash(m,c){R.alert=m;R.alertT=1.8;const el=$('ralert');el.textContent=m;el.style.color=c;el.style.opacity=1}
+function endRange(abort){if(!R)return;R.done=1;$('range').classList.remove('on');if(abort){R=null}}
+let last=0;
+function rloop(now){if(!R||R.done)return;const dt=Math.min(.05,(now-last)/1000);last=now;rupd(dt);rdraw();requestAnimationFrame(rloop)}
+function soilAt(z){for(const s of R.segs)if(z>=s.z0&&z<s.z1)return s.s;return SOILS[SOILS.length-1]}
+function rupd(dt){const a=AN;R.t+=dt;R.alertT-=dt;if(R.alertT<=0)$('ralert').style.opacity=0;
+ // heat model: % of capacity. Moving makes some heat; firing makes weapon heat; cooling removes.
+ const firing=R.stage===2&&R.shut<=0&&!R.fell;
+ const target=R.shut>0?5:firing?88*a.heatRatio:R.stage===1?30*a.heatRatio:15;
+ R.heat=Math.min(130,Math.max(0,R.heat+(target-R.heat)*dt*(target>R.heat?.45:.9)));R.peakHeat=Math.max(R.peakHeat,R.heat);
+ if(R.heat>=100&&R.shut<=0){R.shut=3;R.shutN++;flash('🔥 THERMAL SHUTDOWN','#fbbf24')}
+ if(R.shut>0){R.shut-=dt}
+ for(const p of R.parts){p.x+=p.vx*dt;p.y+=p.vy*dt;p.z+=p.vz*dt;p.vy-=12*dt;p.l-=dt}R.parts=R.parts.filter(p=>p.l>0);
+ for(const tr of R.tracers)tr.l-=dt;R.tracers=R.tracers.filter(t=>t.l>0);
+ if(R.stage===1){ // ---- MOBILITY
+  const s=soilAt(R.z);R.soilLog[s[0]]=R.soilLog[s[0]]||{t:0,d:0};
+  let v=a.speed/3.6; // m/s
+  if(R.buckle){v*=.15}
+  const sink=a.walkP>s[1]?Math.min(1,(a.walkP-s[1])/s[1]):0;R.sink=sink*1.2;
+  v*=Math.max(.12,1-sink*.85);if(sink>.6&&!R.bogFlag){R.bogFlag=1;R.bog++;flash('BOGGED DOWN // '+s[0],'#fbbf24')}
+  if(s[0].startsWith('ROCK')){const need=20,grip=FEET[B.feet].tr*(CH[B.chassis].kind==='quad'||CH[B.chassis].kind==='tracked'?1.3:1);
+   if(R.slopeOK===null){R.slopeOK=a.tipDeg*grip>need*1.4;if(!R.slopeOK){R.fell=1;R.fellT=2.2;flash('SLIPPED ON THE SLOPE','#f43f5e')}}
+   v*=.6*Math.min(1.2,grip)}
+  if(R.fell){R.fellT-=dt;v=0;if(R.fellT<=0)R.fell=0}
+  if(s!==R.lastSoil){R.lastSoil=s;R.bogFlag=0}
+  const sim=v*2.2; // compress time: the course is short
+  R.z+=sim*dt*.9;R.walk+=dt*(1.5+v*.35);R.dist+=v*dt;R.spdSum+=v*3.6;R.spdN++;R.soilLog[s[0]].t+=dt;R.soilLog[s[0]].d+=v*dt;
+  if(R.z>=R.segs[R.segs.length-1].z1||R.t>16){R.stage=2;R.t2=0;R.z=Math.min(R.z,R.segs[R.segs.length-1].z1);R.sink=0;R.fell=0;setupTargets();flash('STAGE 2 // LIVE FIRE','#00d2ff')}}
+ else if(R.stage===2){ // ---- LIVE FIRE
+  R.t2+=dt;if(R.wl.length){R.wl.forEach((w,i)=>{R.wcd[i]-=dt*R.brown*(1+(HEAD[B.head].rof||0));if(R.wcd[i]<=0&&firing){
+    const tg=R.targets.find(t=>t.hp>0&&t.d<=w.rng*1.02);R.wcd[i]+=1/w.rof;if(!tg)return;R.shots++;
+    const ws=AN.wstats[i],pHit=ws.acc*(1-.45*tg.d/w.rng)*(1-Math.min(.3,R.heat/400));const hit=Math.random()<pHit;
+    const mz=R.muz[w.slot]||[R.mx||0,6,R.z];R.fireFx=R.fireFx||{};R.fireFx[w.slot]=.08;
+    R.tracers.push({a:mz,b:[tg.x+(hit?0:(Math.random()-.5)*4),tg.y+(hit?0:(Math.random()-.5)*3),tg.z],l:.18,c:w===W.laser||w.n==='Helios Laser'?'#ff3a5a':w.n.includes('Rail')?'#7ad8ff':'#ffd27a',w:w.n.includes('Rail')?3:1.4});
+    if(hit){R.hits++;const d=w.dmg*(w.n.includes('Flamer')?1:1);tg.hp-=d;R.dmg+=Math.min(d,Math.max(0,tg.hp+d));
+     if(tg.hp<=0){for(let k=0;k<22;k++)R.parts.push({x:tg.x,y:tg.y,z:tg.z,vx:(Math.random()-.5)*14,vy:Math.random()*12,vz:(Math.random()-.5)*14,l:.9,c:Math.random()<.5?'#ffb44a':'#ff5a1f'})}}}})}
+  if(R.t2>13||R.targets.every(t=>t.hp<=0)){R.stage=3;R.t3=0;flash('STAGE 3 // STRESS TEST','#00d2ff')}}
+ else if(R.stage===3){ // ---- STRESS
+  R.t3+=dt;
+  if(R.t3<5&&Math.random()<dt*7){const ev=Math.random()<AN.ecm;R.incoming.push({x:R.mx+(Math.random()-.5)*30,y:4+Math.random()*6,z:R.z+60,l:.5,miss:ev})}
+  for(const q of R.incoming){q.l-=dt;if(q.l<=0&&!q.hit){q.hit=1;if(q.miss)continue;let d=26*(1-AN.armorR/130);if(R.shield>0){const s=Math.min(R.shield,d*1.6);R.shield-=s;d-=s/1.6}R.hp=Math.max(0,R.hp-d*.55);
+    R.tracers.push({a:[q.x,q.y,q.z],b:[R.mx||0,5,R.z],l:.15,c:'#ff4a5a',w:1.6});for(let k=0;k<6;k++)R.parts.push({x:(R.mx||0)+(Math.random()-.5)*3,y:5+Math.random()*3,z:R.z+1.5,vx:(Math.random()-.5)*8,vy:Math.random()*6,vz:Math.random()*4,l:.5,c:R.shield>0?'#7ad8ff':'#ffd27a'})}}
+  R.incoming=R.incoming.filter(q=>!q.hit);
+  if(R.t3>5.2&&!R.shockDone){R.shockDone=1;R.shock=1;const survive=AN.tipDeg>16&&AN.marg>.2&&!R.buckle;R.shockFell=!survive;flash(survive?'SHOCKWAVE // STILL STANDING':'SHOCKWAVE // KNOCKED DOWN',survive?'#34d399':'#f43f5e')}
+  if(R.shock>0)R.shock=Math.max(0,R.shock-dt*.6);
+  if(R.t3>8.5){R.done=1;report()}}
+ $('rstage').innerHTML=`STAGE ${R.stage}/3<big>${['','MOBILITY COURSE','LIVE FIRE','STRESS TEST'][R.stage]}</big>`;
+ $('h-spd').textContent=R.stage===1?`${(R.spdN?R.spdSum/R.spdN:0).toFixed(0)} km/h`:'—';
+ $('h-heat').textContent=Math.round(Math.min(100,R.heat))+'%';$('h-heatb').style.width=Math.min(100,R.heat)+'%';$('h-heatb').style.background=R.heat>80?'#f43f5e':R.heat>55?'#fbbf24':'#00d2ff';
+ $('h-hits').textContent=`${R.hits}/${R.shots}`;$('h-hp').textContent=Math.round(R.hp)+'%'+(R.shield>0?' 🛡':'');$('h-hpb').style.width=R.hp+'%';$('h-hpb').style.background=R.hp<40?'#f43f5e':'#34d399'}
+function setupTargets(){const ds=[150,400,900,1800,3500];R.targets=ds.map((d,i)=>({d,hp:[60,120,200,300,420][i],mx:[60,120,200,300,420][i],x:(i%2?1:-1)*(4+i*2),y:1.2,z:R.z+18+i*11,sz:1.4+i*.35}))}
+function rdraw(){rx.setTransform(RD,0,0,RD,0,0);const g=rx.createLinearGradient(0,0,0,RH);g.addColorStop(0,'#0a1630');g.addColorStop(.55,'#122546');g.addColorStop(.56,'#0a0f1a');g.addColorStop(1,'#03050b');rx.fillStyle=g;rx.fillRect(0,0,RW,RH);
+ const a=AN,c=CH[B.chassis];const mx=0;R.mx=mx;
+ const cam={yaw:R.stage===2?-.3:R.stage===3?.55:R.camYaw,pitch:.3,dist:R.stage===2?26:19,tx:0,ty:c.hip,tz:R.z+(R.stage===2?14:0),xray:false};
+ R.camYaw+=(-1.15-R.camYaw)*.02;
+ FACES=[];MS=[I];
+ // ground strips
+ const zLo=R.z-16,zHi=R.z+(R.stage>=2?80:45);
+ for(let z=Math.floor(zLo/4)*4;z<zHi;z+=4){const sg=R.segs.find(q=>z>=q.z0&&z<q.z1),base=sg?sg.s[2]:'#2a3140';
+  for(let x=-12;x<12;x+=3){const k=((Math.round(x/3)+z/4)&1)?1:.88,[r,g,b2]=rgb(base);FACES.push({p:[[x,0,z],[x+3,0,z],[x+3,0,z+4],[x,0,z+4]],c:'#'+[r,g,b2].map(v=>Math.round(v*k).toString(16).padStart(2,'0')).join(''),ds:1,g:1})}}
+ // targets
+ for(const t of R.targets){if(t.hp<=0){FACES.push({p:[[t.x-t.sz,.05,t.z-t.sz],[t.x+t.sz,.05,t.z-t.sz],[t.x+t.sz,.05,t.z+t.sz],[t.x-t.sz,.05,t.z+t.sz]],c:'#111',ds:1,g:1});continue}
+  at(T(t.x,0,t.z),()=>{box(t.sz*1.6,t.sz*2.2,t.sz*1.2,'#7a5a3a');at(T(0,t.sz*2.2,0),()=>box(t.sz*1.0,t.sz*.6,t.sz*.8,'#5b4630'));face([[-t.sz*.5,t.sz*1.2,t.sz*.61],[t.sz*.5,t.sz*1.2,t.sz*.61],[t.sz*.5,t.sz*1.6,t.sz*.61],[-t.sz*.5,t.sz*1.6,t.sz*.61]],'#f43f5e',{e:1})})}
+ const fire={};if(R.fireFx)for(const k in R.fireFx){R.fireFx[k]-=1/60;if(R.fireFx[k]>0)fire[k]=1}
+ const fall=R.fell?Math.min(1.2,(2.2-R.fellT)*2)*(R.fellT>.6?1:R.fellT/.6)*.9:R.shockFell&&R.stage===3&&R.t3>5.2?Math.min(1.35,(R.t3-5.2)*2):0;
+ const lean=cl(-a.cog[0]*.18,-.12,.12)+(R.shock?Math.sin(R.t*20)*R.shock*.12:0);
+ const out=buildMech(B,{t:R.t,walk:R.walk,moving:R.stage===1&&!R.fell&&!R.buckle,sink:R.sink||0,buckle:R.buckle?.6:0,fire,lean,fall,z:R.z,yaw:0},a);
+ R.muz={};for(const m of out.muzzles)R.muz[m.k]=m.p;
+ renderScene(rx,RW,RH,cam,FACES,(toV,pr)=>{
+  // tracers & particles
+  rx.lineCap='round';for(const tr of R.tracers){const A=toV(tr.a),Bv=toV(tr.b);if(A[2]<.3||Bv[2]<.3)continue;const p=pr(A),q=pr(Bv);rx.strokeStyle=tr.c;rx.globalAlpha=Math.min(1,tr.l*8);rx.lineWidth=tr.w;rx.shadowColor=tr.c;rx.shadowBlur=8;rx.beginPath();rx.moveTo(p[0],p[1]);rx.lineTo(q[0],q[1]);rx.stroke()}rx.shadowBlur=0;rx.globalAlpha=1;
+  for(const p of R.parts){const v=toV([p.x,p.y,p.z]);if(v[2]<.3)continue;const s=pr(v);rx.fillStyle=p.c;rx.globalAlpha=Math.min(1,p.l*2);rx.fillRect(s[0]-2,s[1]-2,4,4)}rx.globalAlpha=1;
+  // labels
+  rx.font='700 10px ui-monospace,monospace';rx.textAlign='center';
+  if(R.stage===1)for(const s of R.segs){const v=toV([12,0,(s.z0+s.z1)/2]);if(v[2]<.3)continue;const p=pr(v);rx.fillStyle='#cbd5e1';rx.fillText(s.s[0],p[0],p[1]);rx.fillStyle='#64748b';rx.fillText(`holds ${fmt(s.s[1])} kPa`,p[0],p[1]+12)}
+  if(R.stage>=2)for(const t of R.targets){const v=toV([t.x,t.sz*3.2,t.z]);if(v[2]<.3)continue;const p=pr(v);rx.fillStyle=t.hp>0?'#f8fafc':'#475569';rx.fillText(`${fmt(t.d)} m`,p[0],p[1]);if(t.hp>0){rx.fillStyle='#1e293b';rx.fillRect(p[0]-16,p[1]+4,32,4);rx.fillStyle='#f43f5e';rx.fillRect(p[0]-16,p[1]+4,32*t.hp/t.mx,4)}}
+  if(R.stage===3&&R.shield>0){const v=toV([0,c.hip+1,R.z]);if(v[2]>.3){const p=pr(v);rx.strokeStyle='rgba(122,216,255,.5)';rx.lineWidth=2;rx.beginPath();rx.arc(p[0],p[1],Math.min(RW,RH)*.22,0,7);rx.stroke()}}
+  if(R.shock>0){const v=toV([0,.2,R.z]);if(v[2]>.3){const p=pr(v);rx.strokeStyle=`rgba(255,180,74,${R.shock})`;rx.lineWidth=3;rx.beginPath();rx.ellipse(p[0],p[1],(1-R.shock)*RW*.8,(1-R.shock)*RH*.15,0,0,7);rx.stroke()}}
+ });
+ if(R.shut>0){rx.fillStyle=`rgba(251,191,36,${.08+.06*Math.sin(R.t*12)})`;rx.fillRect(0,0,RW,RH)}}
+function report(){const a=AN,el=$('report');const acc=R.shots?R.hits/R.shots:0,kills=R.targets.filter(t=>t.hp<=0).length,avgV=R.spdN?R.spdSum/R.spdN:0;
+ const pass=(ok,mid)=>ok?'<span class="pf p">PASS</span>':mid?'<span class="pf m">WEAK</span>':'<span class="pf f">FAIL</span>';
+ const mob=!R.buckle&&R.bog===0&&R.slopeOK!==false,mobMid=!R.buckle&&R.bog<=1;
+ const fireOK=kills>=3&&R.shutN===0,fireMid=kills>=2;
+ const surv=R.hp>45&&!R.shockFell,survMid=R.hp>20;
+ let score=(mob?30:mobMid?18:5)+(fireOK?35:fireMid?20:kills*5)+(surv?30:survMid?15:5)+(a.status==='OPTIMAL'?5:0);
+ const grade=score>=95?'S':score>=82?'A':score>=68?'B':score>=52?'C':score>=36?'D':'F';LAST_GRADE=grade;
+ const gc={S:'#00d2ff',A:'#34d399',B:'#a3e635',C:'#fbbf24',D:'#fb923c',F:'#f43f5e'}[grade];
+ const fixes=[];if(R.buckle)fixes.push('The frame was overloaded and buckled. Cut mass or pick a stronger chassis.');
+ if(R.bog)fixes.push(`Sank in soft ground (${a.walkP.toFixed(0)} kPa walking). Wide pads or tracks spread the load.`);
+ if(R.slopeOK===false)fixes.push('Slipped on the 20° slope. Lower the CoG, widen the stance, or fit spiked grips / gyro.');
+ if(R.shutN)fixes.push(`Overheated ${R.shutN}×. Add cooling or swap hot weapons (laser/railgun) for cooler ones.`);
+ if(kills<3&&R.wl.length)fixes.push(a.maxRng<1800?'Targets out past your range. Longer-range weapons reach the far targets.':'Low hit rate. Heavier frames steady recoil; radar boosts accuracy.');
+ if(!R.wl.length)fixes.push('No weapons fitted, so nothing could be scored on the firing line.');
+ if(R.shockFell)fixes.push(`Knocked over by the shockwave (tips at ${a.tipDeg.toFixed(0)}°). Balance the arms and lower heavy parts.`);
+ if(R.hp<45)fixes.push('Took heavy damage. Better armor, a shield generator or ECM.');
+ if(a.pwrRatio>1)fixes.push('Brownouts slowed everything. The reactor is too small for this loadout.');
+ if(!fixes.length)fixes.push('Nothing to fix. Try a harder build, or chase an S on a cheaper mech!');
+ el.innerHTML=`<div class="rst" style="text-align:center">TEST COMPLETE // ${CH[B.chassis].n.toUpperCase()}</div><div class="grade" style="color:${gc}">${grade}</div><div style="text-align:center;font:700 12px ui-monospace,monospace;color:#94a3b8">SCORE ${score}/100</div>
+ <h3>1 // MOBILITY ${pass(mob,mobMid)}</h3>
+ <div class="rrow"><span>Average speed</span><span>${avgV.toFixed(0)} km/h <span style="color:#64748b">(rated ${a.speed.toFixed(0)})</span></span></div>
+ ${SOILS.map(s=>{const l=R.soilLog[s[0]];if(!l)return'';const v=l.t?l.d/l.t*3.6:0;return`<div class="rrow"><span>${s[0]}</span><span style="color:${a.walkP>s[1]?'#fbbf24':'#34d399'}">${v.toFixed(0)} km/h${a.walkP>s[1]?' · sank':''}</span></div>`}).join('')}
+ <div class="rrow"><span>Slope (20°)</span><span>${R.slopeOK===null?'not reached':R.slopeOK?'climbed':'slipped'}</span></div>
+ <h3>2 // LIVE FIRE ${pass(fireOK,fireMid)}</h3>
+ <div class="rrow"><span>Targets destroyed</span><span>${kills} / 5</span></div>
+ <div class="rrow"><span>Hit rate</span><span>${Math.round(acc*100)}% (${R.hits}/${R.shots})</span></div>
+ <div class="rrow"><span>Damage dealt</span><span>${fmt(R.dmg)}</span></div>
+ <div class="rrow"><span>Peak heat</span><span style="color:${R.peakHeat>=100?'#f43f5e':'#e2e8f0'}">${Math.round(Math.min(R.peakHeat,100))}%${R.shutN?` · ${R.shutN} shutdown${R.shutN>1?'s':''}`:''}</span></div>
+ <h3>3 // STRESS ${pass(surv,survMid)}</h3>
+ <div class="rrow"><span>Integrity left</span><span>${Math.round(R.hp)}%</span></div>
+ <div class="rrow"><span>Shockwave</span><span>${R.shockFell?'knocked down':'stood firm'}</span></div>
+ <h3>ENGINEER'S NOTES</h3>${fixes.map(f=>`<div class="w y"><div>${f}</div></div>`).join('')}
+ <div class="row" style="margin-top:14px"><button class="btn" onclick="startRange()">RE-RUN</button><button class="btn cy" onclick="endRange(true)">BACK TO WORKBENCH</button></div>
+ <div class="row" style="margin-top:8px"><button class="btn" onclick="endRange(true);tabTo('hangar');saveB()">SAVE THIS BUILD</button></div>`;
+ el.classList.add('on');el.scrollTop=0}
+
+/* =====================================================================
+   BOOT
+   ===================================================================== */
+try{const s=JSON.parse(localStorage.getItem('mechlab.cur')||'null');if(s)for(const[k,,tab]of SLOTS)if(s[k]&&tab[s[k]])B[k]=s[k]}catch(e){}
+AN=analyze(B);renderBuild();renderStats();renderLearn();renderHangar();updateBars();
+addEventListener('resize',()=>{fit();if(R&&!R.done)rfit()});fit();
+(function loop(){tick+=1/60;try{drawBench()}catch(e){console.error(e)}requestAnimationFrame(loop)})();
+</script>
+</body>
+</html>
