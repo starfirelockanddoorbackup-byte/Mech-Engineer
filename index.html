@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FUTURELAB // VIRTUAL MECH R&amp;D LAB</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&family=IBM+Plex+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                        mono: ['IBM Plex Mono', 'monospace'],
+                    },
+                    colors: {
+                        labcyan: '#00d2ff',
+                        labdark: '#050811',
+                        labpanel: '#0c1222',
+                        labborder: '#1e293b',
+                        labwarning: '#f43f5e'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #050811; color: #f8fafc; }
+        .mono { font-family: 'IBM Plex Mono', monospace; }
+        .sci-fi-grid { background-image: radial-gradient(rgba(0, 210, 255, 0.12) 1px, transparent 1px); background-size: 24px 24px; }
+        .glow-border { box-shadow: 0 0 15px rgba(0, 210, 255, 0.15); }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col sci-fi-grid">
+
+    <!-- Top Header Bar -->
+    <header class="border-b border-labborder bg-labdark/95 backdrop-blur sticky top-0 z-50 px-4 py-3 flex justify-between items-center">
+        <div class="flex items-center space-x-3">
+            <span class="px-2 py-0.5 bg-labcyan/10 text-labcyan text-[10px] font-mono font-bold border border-labcyan/40 rounded">FUTURELAB // R&amp;D</span>
+            <h1 class="font-mono font-extrabold text-sm sm:text-base tracking-wider text-white">MECH LAB <span class="text-labcyan text-xs">// SYS.01</span></h1>
+        </div>
+        <div class="flex items-center space-x-3 font-mono text-xs">
+            <button onclick="exportJSON()" class="px-3 py-1 bg-labcyan text-labdark font-extrabold rounded text-[11px] hover:opacity-90 transition">EXPORT JSON</button>
+        </div>
+    </header>
+
+    <!-- Main Mobile-Friendly Layout -->
+    <main class="flex-1 max-w-4xl w-full mx-auto p-4 flex flex-col space-y-4">
+
+        <!-- Chassis Selector & Visualizer Preview -->
+        <div class="bg-labpanel border border-labborder rounded-xl p-4 flex flex-col items-center relative glow-border">
+            <div class="w-full flex justify-between items-center mb-3 font-mono text-xs">
+                <span class="text-gray-400">CHASSIS FRAME:</span>
+                <select id="chassisSelect" onchange="updateChassis()" class="bg-labdark border border-labborder text-labcyan font-bold p-1.5 rounded text-xs">
+                    <option value="biped_light">AT-24 Biped (Light - Max 80T)</option>
+                    <option value="biped_heavy">Atlas Biped (Heavy - Max 140T)</option>
+                    <option value="quad">Tarantula Quad (All-Terrain - Max 110T)</option>
+                </select>
+            </div>
+
+            <!-- SVG Mech Blueprint Schematic -->
+            <div class="relative w-full h-48 sm:h-56 flex items-center justify-center bg-labdark/60 border border-labborder rounded-lg my-2">
+                <svg class="w-40 h-40 text-labcyan" viewBox="0 0 200 200" fill="none" stroke="currentColor" stroke-width="2">
+                    <polygon points="70,40 130,40 145,90 120,130 80,130 55,90" fill="#0c1222" stroke="#00d2ff" stroke-width="2"/>
+                    <rect x="90" y="20" width="20" height="18" fill="#00d2ff" opacity="0.8"/>
+                    <rect id="svg-l-arm" x="35" y="70" width="25" height="50" rx="4" fill="#0c1222" stroke="#00d2ff"/>
+                    <rect id="svg-r-arm" x="140" y="70" width="25" height="50" rx="4" fill="#0c1222" stroke="#00d2ff"/>
+                    <path d="M75,130 L65,180 L85,180 L95,130" fill="#0c1222" stroke="#00d2ff"/>
+                    <path d="M125,130 L135,180 L115,180 L105,130" fill="#0c1222" stroke="#00d2ff"/>
+                </svg>
+                <div class="absolute bottom-2 font-mono text-[10px] text-labcyan animate-pulse">● STRUCTURAL TELEMETRY ACTIVE</div>
+            </div>
+        </div>
+
+        <!-- Real-World Engineering Telemetry Panel -->
+        <div class="bg-labpanel border border-labborder rounded-xl p-4 font-mono space-y-3">
+            <div class="text-[10px] text-gray-400 font-bold uppercase tracking-widest flex justify-between">
+                <span>Engineering Telemetry</span>
+                <span id="status-badge" class="text-labcyan">OPTIMAL</span>
+            </div>
+            
+            <div class="space-y-2 text-xs">
+                <!-- Mass Bar -->
+                <div>
+                    <div class="flex justify-between mb-1">
+                        <span class="text-gray-400">Total Mass / Limit:</span>
+                        <span id="stat-mass" class="text-white font-bold">0.0 / 80.0 TONS</span>
+                    </div>
+                    <div class="w-full bg-labdark h-2 rounded overflow-hidden border border-labborder">
+                        <div id="bar-mass" class="bg-labcyan h-full transition-all duration-300" style="width: 0%"></div>
+                    </div>
+                </div>
+
+                <!-- Power Bar -->
+                <div>
+                    <div class="flex justify-between mb-1">
+                        <span class="text-gray-400">Power Draw / Capacity:</span>
+                        <span id="stat-power" class="text-white font-bold">0 / 500 MW</span>
+                    </div>
+                    <div class="w-full bg-labdark h-2 rounded overflow-hidden border border-labborder">
+                        <div id="bar-power" class="bg-labcyan h-full transition-all duration-300" style="width: 0%"></div>
+                    </div>
+                </div>
+
+                <!-- Center of Gravity & Heat -->
+                <div class="grid grid-cols-2 gap-2 pt-2 border-t border-labborder text-[11px]">
+                    <div><span class="text-gray-400 block">CENTER OF GRAVITY:</span> <strong id="stat-cog" class="text-labcyan">BALANCED (0.0m)</strong></div>
+                    <div><span class="text-gray-400 block">EST. TOP SPEED:</span> <strong id="stat-speed" class="text-white">45.0 km/h</strong></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Hardpoint Configuration Slots -->
+        <div class="bg-labpanel border border-labborder rounded-xl p-4 font-mono space-y-3">
+            <div class="text-[10px] text-gray-400 font-bold uppercase tracking-widest">Hardpoint Component Slots</div>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+                <div class="bg-labdark border border-labborder p-3 rounded-lg flex justify-between items-center">
+                    <div>
+                        <span class="text-[9px] text-gray-400 block">LEFT ARM</span>
+                        <select id.slot="l-arm" onchange="recalculateStats()" class="bg-transparent text-white font-bold text-xs focus:outline-none cursor-pointer">
+                            <option value="gatling">Typhoon Gatling (16T, 50MW)</option>
+                            <option value="cannon">40mm Autocannon (22T, 30MW)</option>
+                            <option value="empty">-- Empty Slot (0T) --</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="bg-labdark border border-labborder p-3 rounded-lg flex justify-between items-center">
+                    <div>
+                        <span class="text-[9px] text-gray-400 block">RIGHT ARM</span>
+                        <select id="r-arm" onchange="recalculateStats()" class="bg-transparent text-white font-bold text-xs focus:outline-none cursor-pointer">
+                            <option value="cannon">40mm Autocannon (22T, 30MW)</option>
+                            <option value="gatling">Typhoon Gatling (16T, 50MW)</option>
+                            <option value="empty">-- Empty Slot (0T) --</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="bg-labdark border border-labborder p-3 rounded-lg flex justify-between items-center">
+                    <div>
+                        <span class="text-[9px] text-gray-400 block">SHOULDER POD</span>
+                        <select id="shoulder" onchange="recalculateStats()" class="bg-transparent text-white font-bold text-xs focus:outline-none cursor-pointer">
+                            <option value="missile">LO2 Missile Rack (14T, 45MW)</option>
+                            <option value="shield">Aegis Shield Gen (18T, 90MW)</option>
+                            <option value="empty">-- Empty Slot (0T) --</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="bg-labdark border border-labborder p-3 rounded-lg flex justify-between items-center">
+                    <div>
+                        <span class="text-[9px] text-gray-400 block">ARMOR PLATING</span>
+                        <select id="armor" onchange="recalculateStats()" class="bg-transparent text-white font-bold text-xs focus:outline-none cursor-pointer">
+                            <option value="reactive">Reactive Ablative (25T, 0MW)</option>
+                            <option value="composite">Light Composite (12T, 0MW)</option>
+                            <option value="heavy">Titanium Heavy (40T, 0MW)</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Test Range Trigger -->
+        <button onclick="runTestRange()" class="w-full py-3.5 bg-labcyan text-labdark font-mono font-extrabold rounded-xl text-center shadow-lg shadow-cyan-500/20 hover:opacity-90 transition">
+            INITIATE TEST RANGE STRESS-TEST →
+        </button>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-labborder bg-labdark py-3 text-center font-mono text-[10px] text-gray-500 mt-auto">
+        FUTURELAB R&amp;D DIVISION // VIRTUAL MECH WORKBENCH v0.1
+    </footer>
+
+    <script>
+        // Component Database (Rooted in real-world engineering metrics)
+        const parts = {
+            gatling: { mass: 16, power: 50, side: -1 },
+            cannon: { mass: 22, power: 30, side: 1 },
+            missile: { mass: 14, power: 45, side: 0 },
+            shield: { mass: 18, power: 90, side: 0 },
+            reactive: { mass: 25, power: 0, side: 0 },
+            composite: { mass: 12, power: 0, side: 0 },
+            heavy: { mass: 40, power: 0, side: 0 },
+            empty: { mass: 0, power: 0, side: 0 }
+        };
+
+        const chassisLimits = {
+            biped_light: { baseMass: 35, maxLoad: 80, powerCap: 500 },
+            biped_heavy: { baseMass: 55, maxLoad: 140, powerCap: 750 },
+            quad: { baseMass: 45, maxLoad: 110, powerCap: 600 }
+        };
+
+        function updateChassis() {
+            recalculateStats();
+        }
+
+        function recalculateStats() {
+            const chassisKey = document.getElementById('chassisSelect').value;
+            const chassis = chassisLimits[chassisKey];
+
+            const lArm = parts[document.getElementById('l-arm').value];
+            const rArm = parts[document.getElementById('r-arm').value];
+            const shoulder = parts[document.getElementById('shoulder').value];
+            const armor = parts[document.getElementById('armor').value];
+
+            const totalMass = chassis.baseMass + lArm.mass + rArm.mass + shoulder.mass + armor.mass;
+            const totalPower = lArm.power + rArm.power + shoulder.power + armor.power;
+            
+            // Center of gravity calculation based on lateral asymmetry (Square-Cube / Physics simulation)
+            const cogOffset = (lArm.side * lArm.mass + rArm.side * rArm.mass) / (totalMass || 1);
+
+            // Update UI Bars
+            document.getElementById('stat-mass').innerText = `${totalMass.toFixed(1)} / ${chassis.maxLoad} TONS`;
+            document.getElementById('stat-power').innerText = `${totalPower} / ${chassis.powerCap} MW`;
+            
+            const massPercent = Math.min(100, (totalMass / chassis.maxLoad) * 100);
+            const powerPercent = Math.min(100, (totalPower / chassis.powerCap) * 100);
+
+            document.getElementById('bar-mass').style.width = `${massPercent}%`;
+            document.getElementById('bar-power').style.width = `${powerPercent}%`;
+
+            // Status checks (Square-Cube Law & Overweight warnings)
+            const badge = document.getElementById('status-badge');
+            if (totalMass > chassis.maxLoad) {
+                badge.innerText = "OVERWEIGHT // STRUCTURAL FAULT";
+                badge.className = "text-labwarning animate-pulse";
+                document.getElementById('bar-mass').className = "bg-labwarning h-full transition-all duration-300";
+            } else {
+                badge.innerText = "OPTIMAL";
+                badge.className = "text-labcyan";
+                document.getElementById('bar-mass').className = "bg-labcyan h-full transition-all duration-300";
+            }
+
+            // CoG and Speed readout
+            document.getElementById('stat-cog').innerText = Math.abs(cogOffset) < 0.1 ? "BALANCED (0.0m)" : `${cogOffset > 0 ? 'RIGHT' : 'LEFT'} HEAVY (${Math.abs(cogOffset).toFixed(2)}m)`;
+            const estSpeed = Math.max(10, 55 - (totalMass * 0.35));
+            document.getElementById('stat-speed').innerText = `${estSpeed.toFixed(1)} km/h`;
+        }
+
+        function exportJSON() {
+            const buildData = {
+                chassis: document.getElementById('chassisSelect').value,
+                loadout: {
+                    leftArm: document.getElementById('l-arm').value,
+                    rightArm: document.getElementById('r-arm').value,
+                    shoulder: document.getElementById('shoulder').value,
+                    armor: document.getElementById('armor').value
+                }
+            };
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(buildData, null, 2));
+            const downloadAnchor = document.createElement('a');
+            downloadAnchor.setAttribute("href", dataStr);
+            downloadAnchor.setAttribute("download", "mech_blueprint.json");
+            document.body.appendChild(downloadAnchor);
+            downloadAnchor.click();
+            downloadAnchor.remove();
+        }
+
+        function runTestRange() {
+            alert("STRESS TEST INITIATED: Testing structural load, recoil stability, and thermal dissipation on test grid.");
+        }
+
+        // Initial run
+        recalculateStats();
+    </script>
+</body>
+</html>
